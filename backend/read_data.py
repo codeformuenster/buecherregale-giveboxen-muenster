@@ -86,7 +86,7 @@ def get_json_from_wiki_table(data):
             value = line[1:].strip()
 
             # Wiki-Link bereinigen: [[Link|Name]] → Name
-            match = re.match(r'\[\[.*\|(.*)\]\]', value)
+            match = re.match(r'\[\[(.*?)\|.*?\]\]', value)
             if match:
                 value = match.group(1)
 

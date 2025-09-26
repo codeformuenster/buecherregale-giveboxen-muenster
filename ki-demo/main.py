@@ -18,6 +18,33 @@ def prepare_image(path: str, max_width: int = 1600, quality: int = 85) -> str:
     b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
     return f"data:image/jpeg;base64,{b64}"
 
+# ---------- catching givebox pictures ----------
+GIVEBOX_CHECK_INSTRUCTIONS = (
+    "Du bist ein sehr strenger Bilderkenner für Giveboxen."
+    " Kategorisiere ausschließlich in eine der festen Kategorien:"
+    " givebox-ok, no-givebox"
+    " Keine Halluzinationen, keine Vermutungen."
+    " Wenn etwas unklar ist, lasse es weg."
+)
+
+def build_user_content_givebox_check(image_url: str):
+    return [
+        {
+            "type": "input_text",
+            "text": (
+                " Erkenne, ob auf dem Bild eine Givebox zu sehen ist."
+                " Ordne jedes Objekt GENAU EINER der vorgegebenen Kategorien zu."
+                " Nur reale, im Bild erkennbare Dinge (keine Schilder, Deko-Texte o. Ä.,"
+                " es sei denn sie sind selbst Objekte)."
+                " Ausgabe bitte als strukturierte Liste von Items mit: givebox."
+                " Kategorien: givebox-ok, no-givebox"
+                " Deutsch ausgeben."
+            ),
+        },
+        {"type": "input_image", "image_url": image_url},
+    ]
+
+
 
 # ---------- Kategorien ----------
 class Category(str, Enum):
@@ -36,6 +63,8 @@ class Category(str, Enum):
     plants = "plants"
     food = "food"
     other = "other"
+    givebox_ok = "givebox_ok"
+    givebox_not_ok = "givebox_not_ok"
 
 
 # ---------- Datenmodelle ----------
@@ -68,7 +97,7 @@ def build_user_content(image_url: str):
         {
             "type": "input_text",
             "text": (
-                "Erkenne und liste alle Gegenstände in der Givebox."
+                " Erkenne und liste alle Gegenstände in der Givebox."
                 " Ordne jedes Objekt GENAU EINER der vorgegebenen Kategorien zu."
                 " Nur reale, im Bild erkennbare Dinge (keine Schilder, Deko-Texte o. Ä.,"
                 " es sei denn sie sind selbst Objekte)."
@@ -105,8 +134,24 @@ def save_json(items, path="givebox.json"):
 def main():
     client = OpenAI()
 
-    image_url = prepare_image("/home/antoniowittke/Downloads/test2.jpeg")
+    image_url = prepare_image("/home/ross/Dokumente/projekte/buecherregale-giveboxen-muenster/test2nah.jpeg")
 
+    # Abfangen von keinen Givebox-Bildern
+    resp = client.responses.parse(
+        model="gpt-5-mini",
+        input=[
+            {"role": "system", "content": GIVEBOX_CHECK_INSTRUCTIONS},
+            {"role": "user", "content": build_user_content_givebox_check(image_url)},
+        ],
+        text_format=ItemList,
+    )
+
+    # Überprüfen, ob eine Givebox erkannt wurde
+    if not any(item.category == "givebox_ok" for item in resp.output_parsed.items):
+        print("Keine Givebox auf dem Bild erkannt. Programm wird beendet.")
+        return
+
+    # Objekte erkennen
     resp = client.responses.parse(
         model="gpt-5-mini",
         input=[

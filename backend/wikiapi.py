@@ -53,6 +53,12 @@ def get(poi, allFormat = False):
     wikitext = data['parse']['wikitext']['*']
     if not allFormat: wikitext = get_structured_data(wikitext)    
     else: wikitext = get_json_from_wiki_table(wikitext)
+    
+    print('curr', wikitext['Vorschaubild'])
+
+
+    wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
+    wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
 
     return wikitext
 
@@ -67,11 +73,26 @@ def alter_contents(location, items):
     data = res.json()
     token = data['query']['tokens']['logintoken']
 
-    
-
     return data
 
 
+def _get_image_urls(images):
+    image_names = [f"Datei:{name.split('|')[0]}" for name in images]
+
+    print(image_names, images)
+
+    params_get = {
+      'action': 'query',
+      'titles': image_names,
+      'prop': 'imageinfo',
+      'iiprop': 'url',
+      'format': 'json',
+      'formatversion': 2
+    }
+    res = S.get(url=URL, params=params_get)
+    data = res.json()
+
+    return [url['imageinfo'][0]['url'] for url in data['query']['pages']]
 
 
 
