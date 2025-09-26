@@ -42,4 +42,4 @@ if __name__ == '__main__':
 @app.post('/set_items')
 def set_items():
     new_items = request.json()
-    return {'data': wikiapi.set_contents(None)}     
+     

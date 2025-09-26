@@ -47,7 +47,9 @@ def get(poi):
     if 'error' in data.keys(): return {'error': 'invalid poi'}
     
     wikitext = data['parse']['wikitext']['*']
-    return get_structured_data(wikitext)
+    if poi != None: get_structured_data(wikitext)    
+
+    return wikitext
 
 def alter_contents(new_contents):   
     params_get = {
