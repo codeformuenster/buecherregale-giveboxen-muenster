@@ -1,1 +1,38 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: "Reddit Sans";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("/RedditSans-VariableFont_wght.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Reddit Sans";
+  font-style: italic;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("/RedditSans-Italic-VariableFont_wght.ttf") format("truetype");
+}
+
+@theme {
+  --color-gray-50: oklch(0.985 0 0);
+  --color-gray-100: oklch(0.97 0 0);
+  --color-gray-200: oklch(0.922 0 0);
+  --color-gray-300: oklch(0.87 0 0);
+  --color-gray-400: oklch(0.708 0 0);
+  --color-gray-500: oklch(0.556 0 0);
+  --color-gray-600: oklch(0.439 0 0);
+  --color-gray-700: oklch(0.371 0 0);
+  --color-gray-800: oklch(0.269 0 0);
+  --color-gray-900: oklch(0.205 0 0);
+  --color-gray-950: oklch(0.145 0 0);
+  --font-sans: "Reddit Sans", "Inter", "Segoe UI", "Helvetica Neue", system-ui,
+    -apple-system, BlinkMacSystemFont, "Arial", sans-serif;
+}
+
+body {
+  background-color: theme("colors.gray.200");
+  font-family: theme("fontFamily.sans");
+}

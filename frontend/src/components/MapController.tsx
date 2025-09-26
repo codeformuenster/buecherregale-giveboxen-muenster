@@ -3,21 +3,24 @@ import { useEffect } from "react";
 import { useMap } from "react-leaflet";
 
 export function MapController({
-  position,
+  lat,
+  lng,
 }: {
-  position: [number, number] | null;
+  lat: number | null;
+  lng: number | null;
 }) {
   const map = useMap();
 
   useEffect(() => {
-    if (position) {
-      map.fitBounds(L.latLngBounds([position]), {
+    if (lat !== null && lng !== null) {
+      map.fitBounds(L.latLngBounds([[lat, lng]]), {
         paddingTopLeft: [0, 100], // left=0px, top=100px
         paddingBottomRight: [0, 500], // right=0px, bottom=500px
         animate: true,
+        duration: 1,
       });
     }
-  }, [map, position]);
+  }, [map, lat, lng]);
 
   return null;
 }
