@@ -1,5 +1,6 @@
 # buecherregale-giveboxen-muenster
-buecherregale giveboxen muenster
+
+Münsterhack 2025 Projekt Repository
 
 # Hook / Problem:
 - „Giveboxen sind ein großartiges, nachhaltiges Konzept – Dinge werden geteilt statt weggeschmissen.“
@@ -30,3 +31,57 @@ buecherregale giveboxen muenster
 # Abschluss:
 -„Kurz gesagt: Wir machen Giveboxen smarter. Von Zufallsfund zu gezieltem Fund, dank KI, Crowd-Daten und einfacher Suche.“
 - „Damit wird Nachhaltigkeit nicht nur praktisch, sondern auch digital zugänglich.“
+
+# Technische Infos
+
+## Überlegungen zur Datenstruktur im Wiki
+
+```bash
+
+    - Mehrere Listen-Seiten mit Tabellen drauf: 
+        - Give Boxen
+        - Bücherregale
+        - Hofläden
+
+    - 3 Seiten mit Tabellen. Details der Tabellen: 
+        - ID
+        - Name
+        - Adresse
+        - Link zur Detailseite mit Box-Details (s.u.)
+
+    - 100 Seiten mit Box-Details: 
+        - Latitude/Longitude
+        - Öffnungszeigen & Besonderheiten
+        - Typ der Box (Givebox, Bücherregal, )
+        - Sortiment (per KI aus dem Inhalt erkannt)
+        - Fotos
+            - Vorschaubild
+            - Fotos vom Inhalt
+```
+
+## Frontend
+Technologie
+- React
+
+Seiten
+- Startseite / Karte    
+    - Karte wie google Maps
+    - Oben Suchleiste
+    - Darunter kann man Stichworte auswählen
+    - Mitte = Karte mit Pins
+- Liste mit Suchergebnissen
+- Detailseite
+    - Infos
+    - Fotos
+    - Button "Foto machen"
+- Infoseite
+    - Neue Box anlegen - Button
+
+Benötigte API Endpunkte: 
+- JSON
+- Startseite = Liste der POIs
+- Suche-Endpunkt = Gefilterte Liste mit POIs
+    - per Kategorie 
+    - Suche nach Freitext
+- Details einer Givebox
+- QR-Codes generieren
