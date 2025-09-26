@@ -9,6 +9,8 @@ import pyfiglet
 import random
 from datetime import datetime
 
+from read_data import get_structured_data
+
 S = requests.Session()
 
 URL = "https://www.muenster4you.de/w/api.php?"
@@ -26,10 +28,13 @@ def search(query):
     res = S.get(url=URL, params=params_get)
     data = res.json()
     results = data['query']['search']
+ 
     return results
 
 
 def get(poi):
+    if poi == None: poi = 'Sharing/GiveBoxen'
+
     params_get = {
         'action': "parse",
         'page': poi,
@@ -38,5 +43,20 @@ def get(poi):
     }
     res = S.get(url=URL, params=params_get)
     data = res.json()
-    #wikitext = data['parse']['wikitext']['*']
+    
+    if 'error' in data.keys(): return {'error': 'invalid poi'}
+    
+    wikitext = data['parse']['wikitext']['*']
+    return get_structured_data(wikitext)
+
+def alter_contents(new_contents):   
+    params_get = {
+        'action': "query",
+        'meta': "tokens",
+        'type': "login",
+        'format': "json"
+    }
+    res = S.get(url=URL, params=params_get)
+    data = res.json()
+
     return data
