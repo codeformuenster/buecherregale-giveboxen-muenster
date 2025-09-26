@@ -34,6 +34,9 @@ Münsterhack 2025 Projekt Repository
 
 # Technische Infos
 
+Link zu den Daten: https://www.muenster4you.de/wiki/Sharing
+
+
 ## Überlegungen zur Datenstruktur im Wiki
 
 ```bash
@@ -85,3 +88,17 @@ Benötigte API Endpunkte:
     - Suche nach Freitext
 - Details einer Givebox
 - QR-Codes generieren
+
+
+Detailseite angelegt und Fotos hochgeladen: 
+* Sharing/Bücherschränke/Arkaden
+* Sharing/Bücherschränke/Rosenplatz
+* Sharing/Bücherschränke/Hiltrup Osttor
+* Sharing/Bücherschränke/HiltrupMarktallee
+* Sharing/GiveBoxen/Josefskirchplatz
+* Sharing/GiveBoxen/HausMariengrund
+* Sharing/GiveBoxen/Hiltrup
+* Sharing/Bücherschränke/HiltrupMeesenstiege
+* Sharing/Bücherschränke/FHMünster
+* Sharing/GiveBoxen/Gievenbeck
+* Sharing/GiveBoxen/Gremmendorf
