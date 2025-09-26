@@ -44,4 +44,4 @@ def get(poi):
     if 'error' in data.keys(): return {'error': 'invalid poi'}
     
     wikitext = data['parse']['wikitext']['*']
-    return wikitext
+    return data
