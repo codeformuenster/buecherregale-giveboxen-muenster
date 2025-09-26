@@ -11,6 +11,7 @@ import { SearchSheet } from "./components/SearchSheet";
 import { AnimatePresence, motion } from "motion/react";
 import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 import { useNavigate, useParams } from "react-router";
+import { getItems, type Item } from "./api/get";
 import { MapController } from "./components/MapController";
 
 const bookIcon = L.divIcon({
@@ -43,6 +44,14 @@ function App() {
 
   const navigate = useNavigate();
   const { category, id } = useParams();
+
+  const [items, setItems] = useState<Item[]>([]);
+
+  useEffect(() => {
+    getItems().then((data) => {
+      setItems(data);
+    });
+  }, []);
 
   const [giveboxes, setGiveboxes] = useState<Givebox[]>([]);
   const [isLoadingGiveboxes, setIsLoadingGiveboxes] = useState(false);
@@ -140,6 +149,10 @@ function App() {
     setSearchQuery(event.target.value);
   };
 
+  useEffect(() => {
+    getItems();
+  }, []);
+
   const handleSearchResultSelect = (id: string) => {
     setSelectedGiveboxId(id);
     const selected = giveboxes.find((entry) => entry.id === id);
@@ -154,7 +167,7 @@ function App() {
     <div className="relative h-[100lvh] w-screen overflow-hidden select-none">
       <MapContainer
         center={[51.960655, 7.626135]}
-        zoom={12}
+        zoom={13}
         scrollWheelZoom={false}
         zoomControl={false}
         style={{ height: "100%", width: "100%", zIndex: 0 }}
@@ -165,16 +178,16 @@ function App() {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {giveboxes.map((givebox) => (
+        {items.map((item) => (
           <Marker
-            key={givebox.id}
-            icon={givebox.categories.includes("books") ? bookIcon : giveboxIcon}
-            position={givebox.coordinates}
+            key={item.id}
+            icon={item.category === "Givebox" ? giveboxIcon : bookIcon}
+            position={[item.latitude, item.longitude]}
             eventHandlers={{
               click: () => {
-                setMapCenterLat(givebox.coordinates[0]);
-                setMapCenterLng(givebox.coordinates[1]);
-                navigate("/place/" + givebox.id);
+                setMapCenterLat(item.latitude);
+                setMapCenterLng(item.longitude);
+                navigate("/place/" + item.id);
               },
             }}
           >
@@ -185,12 +198,12 @@ function App() {
               offset={[10, 0]}
               eventHandlers={{
                 click: () => {
-                  setSelectedGiveboxId(givebox.id);
-                  navigate("/place/" + givebox.id);
+                  setSelectedGiveboxId(item.id);
+                  navigate("/place/" + item.id);
                 },
               }}
             >
-              {givebox.name}
+              {item.id}
             </Tooltip>
           </Marker>
         ))}
