@@ -27,3 +27,16 @@ def search(query):
     data = res.json()
     results = data['query']['search']
     return results
+
+
+def get(poi):
+    params_get = {
+        'action': "parse",
+        'page': poi,
+        'prop': 'wikitext',
+        'format': "json"
+    }
+    res = S.get(url=URL, params=params_get)
+    data = res.json()
+    #wikitext = data['parse']['wikitext']['*']
+    return data

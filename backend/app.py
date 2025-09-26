@@ -22,13 +22,22 @@ def search():
       title = element_raw['title'].split('/')
       if not title[0] == 'Sharing' or len(title) != 3: continue
 
-      element = {}
+      data_formatted.append({'title': title[2], 'link': f"https://www.muenster4you.de/wiki/{'/'.join(title)}", 'found_in': element_raw['snippet']})
 
-    data = [element for element in data_raw if element['title'].startswith('Sharing')]    
+    # data = [element for element in data_raw if element['title'].startswith('Sharing')]    
 
     
 
-    return {'data': data}  
-  
+    return {'data': data_formatted}  
+ 
+@app.route('/get')
+def get():
+    poi = request.args.get('poi')
+    if poi == None: return {'error': 'invalid query'}
+
+    data = wikiapi.get(poi)
+
+    return {'data': data}
+ 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
