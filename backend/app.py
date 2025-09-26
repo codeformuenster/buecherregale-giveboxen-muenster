@@ -17,12 +17,15 @@ def search():
 
     data_raw = wikiapi.search(query)
 
-    data_formatted = []
+    data_formatted = {}
     for element_raw in data_raw:
       title = element_raw['title'].split('/')
       if not title[0] == 'Sharing' or len(title) != 3: continue
 
-      data_formatted.append({'title': title[2], 'link': f"https://www.muenster4you.de/wiki/{'/'.join(title)}", 'found_in': element_raw['snippet']})
+      data_formatted['title'] = title[2]
+      data_formatted['link'] = f"https://www.muenster4you.de/wiki/{'/'.join(title)}"
+      data_formatted['found_in'] = element_raw['snippet']
+      data_formatted['data'] = wikiapi.get(element_raw['title'])
 
     return {'data': data_formatted}  
  
@@ -39,5 +42,4 @@ if __name__ == '__main__':
 @app.post('/set_items')
 def set_items():
     new_items = request.json()
-
-    
+    return {'data': wikiapi.set_contents(None)}     
