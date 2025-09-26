@@ -32,9 +32,13 @@ def search(query):
     return results
 
 
-def get(poi):
-    if poi == None: poi = 'Sharing/GiveBoxen'
+def getAll():
+    give_boxes = get('Sharing/GiveBoxen', True)
+    books = get('Sharing/Bücherschränke', True)
 
+    return give_boxes + books
+
+def get(poi, allFormat = False):
     params_get = {
         'action': "parse",
         'page': poi,
@@ -47,11 +51,11 @@ def get(poi):
     if 'error' in data.keys(): return {'error': 'invalid poi'}
     
     wikitext = data['parse']['wikitext']['*']
-    if poi != None: wikitext = get_structured_data(wikitext)    
+    if not allFormat: wikitext = get_structured_data(wikitext)    
 
     return wikitext
 
-def alter_contents(new_contents):   
+def alter_contents(location, items):   
     params_get = {
         'action': "query",
         'meta': "tokens",
@@ -60,5 +64,13 @@ def alter_contents(new_contents):
     }
     res = S.get(url=URL, params=params_get)
     data = res.json()
+    token = data['query']['tokens']['logintoken']
+
+    
 
     return data
+
+
+
+
+
