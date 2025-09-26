@@ -36,6 +36,7 @@ def structured_parse(sections):
     result = {}
     for title, content in sections.items():
         content = content.strip()
+        
         # Key-Value-Liste
         if content.startswith("*"):
             kv_pairs = dict(re.findall(r"\* (.*?): (.*)", content))
@@ -52,9 +53,18 @@ def structured_parse(sections):
     return result
 
 
+def remove_empty_sections(data_dict):
+    return {k: v for k, v in data_dict.items() if v not in ("", [], {})}
+
+
+
 
 def get_structured_data(data):
     sections = parse_sections(data)
     structured = structured_parse(sections)
-    json_structured = json.dumps(structured, ensure_ascii=False, indent=4)
-    return json_structured
+    structured = remove_empty_sections(structured)
+
+    #json_structured = json.dumps(structured, ensure_ascii=False, indent=4)
+    return structured
+
+print(get_structured_data(data))
