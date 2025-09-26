@@ -58,18 +58,24 @@ const CategoryChip = ({
         onClick(category);
       }
     }}
-    className={`flex items-center gap-2 whitespace-nowrap font-medium rounded-full px-4 py-2 text-sm transition-colors shadow ${
-      isActive
-        ? "bg-blue-50 text-blue-700"
-        : "bg-white text-gray-500 hover:bg-gray-100"
+    className={`flex items-center gap-2 whitespace-nowrap font-medium rounded-full px-4 py-2 text-sm transition-colors shadow snap-start shrink-0 filter backdrop-blur-sm backdrop-saturate-180 ${
+      isActive ? "bg-black/70" : "bg-white/80 hover:bg-gray-100/80"
     }`}
     aria-pressed={isActive}
   >
     <Icon
-      className={`h-4 w-4 ${isActive ? "text-blue-600" : "text-gray-400"}`}
+      className={`h-4 w-4 transition-colors ${
+        isActive ? "text-white/80" : "text-gray-400"
+      }`}
       aria-hidden="true"
     />
-    {label}
+    <span
+      className={`transition-colors ${
+        isActive ? "text-white" : "text-gray-700"
+      }`}
+    >
+      {label}
+    </span>
   </button>
 );
 
@@ -82,7 +88,7 @@ export const FilterChips = ({
   activeCategory,
   onCategoryClick,
 }: FilterChipsProps) => (
-  <div className="pointer-events-auto flex gap-2 overflow-x-auto pb-1 px-4">
+  <div className="pointer-events-auto flex gap-2 overflow-x-auto pb-1 px-4 snap-x snap-mandatory [scroll-padding-left:theme(spacing.4)]">
     <CategoryChip
       category="books"
       label="Bücher"

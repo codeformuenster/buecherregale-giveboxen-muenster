@@ -11,6 +11,7 @@ import { FilterChips, type Category } from "./components/FilterChips";
 import { SearchBar } from "./components/SearchBar";
 import { SearchSheet } from "./components/SearchSheet";
 
+import { AnimatePresence, motion } from "motion/react";
 import { MapContainer, Marker, TileLayer } from "react-leaflet";
 import { useNavigate, useParams } from "react-router";
 import { MapController } from "./components/MapController";
@@ -26,7 +27,8 @@ function App() {
   const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
-  const [mapCenter, setMapCenter] = useState<[number, number] | null>(null);
+  const [mapCenterLng, setMapCenterLng] = useState<number | null>(null);
+  const [mapCenterLat, setMapCenterLat] = useState<number | null>(null);
 
   const navigate = useNavigate();
   const { category, id } = useParams();
@@ -155,15 +157,15 @@ function App() {
   };
 
   return (
-    <div className="relative h-[100lvh] w-screen">
+    <div className="relative h-[100lvh] w-screen overflow-hidden select-none">
       <MapContainer
-        center={[51.9607, 7.6261]}
-        zoom={13}
+        center={[51.960655, 7.626135]}
+        zoom={12}
         scrollWheelZoom={false}
         zoomControl={false}
         style={{ height: "100%", width: "100%", zIndex: 0 }}
       >
-        <MapController position={mapCenter} />
+        <MapController lat={mapCenterLat} lng={mapCenterLng} />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -175,14 +177,31 @@ function App() {
             position={givebox.coordinates}
             eventHandlers={{
               click: () => {
-                setMapCenter(givebox.coordinates);
+                setMapCenterLat(givebox.coordinates[0]);
+                setMapCenterLng(givebox.coordinates[1]);
                 navigate("/place/" + givebox.id);
               },
             }}
           ></Marker>
         ))}
       </MapContainer>
-      <div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-3">
+      <AnimatePresence>
+        {category === "search" && (
+          <motion.div
+            className="bg-black/20 absolute inset-0 z-1"
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+          ></motion.div>
+        )}
+      </AnimatePresence>
+      <motion.div className="pointer-events-none absolute inset-0 z-10 flex flex-col gap-3">
         <SearchBar
           placeholder="Etwas suchen..."
           value={searchQuery}
@@ -199,6 +218,8 @@ function App() {
             }
           }}
         />
+      </motion.div>
+      <div className="pointer-events-none z-10 absolute w-full top-0 h-[100dvh]">
         <DetailsSheet
           isOpen={Boolean(category === "place" && id)}
           onClose={() => navigate("/")}
