@@ -2,9 +2,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
 
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import iconShadow from "leaflet/dist/images/marker-shadow.png";
-
 import { fetchGiveboxes, searchGiveboxes, type Givebox } from "./api/giveboxes";
 import { DetailsSheet } from "./components/DetailsSheet";
 import { FilterChips, type Category } from "./components/FilterChips";
@@ -12,19 +9,33 @@ import { SearchBar } from "./components/SearchBar";
 import { SearchSheet } from "./components/SearchSheet";
 
 import { AnimatePresence, motion } from "motion/react";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 import { useNavigate, useParams } from "react-router";
 import { MapController } from "./components/MapController";
 
-const defaultIcon = L.icon({
-  iconUrl,
-  shadowUrl: iconShadow,
+const bookIcon = L.divIcon({
+  className: "custom-marker",
+  html: `
+    <div class="relative w-8 h-8 rounded-full border-2 border-white shadow-[0_0_8px_rgba(0,0,0,0.3)] flex items-center justify-center bg-gradient-to-br from-orange-300 to-orange-500 text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-library-icon lucide-library"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+    </div>
+  `,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
 });
 
-L.Marker.prototype.options.icon = defaultIcon;
+const giveboxIcon = L.divIcon({
+  className: "custom-marker",
+  html: `
+    <div class="relative w-8 h-8 rounded-full border-2 border-white shadow-[0_0_8px_rgba(0,0,0,0.3)] flex items-center justify-center bg-gradient-to-br from-emerald-300 to-emerald-500 text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-open-icon lucide-package-open"><path d="M12 22v-9"/><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"/><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/></svg>
+    </div>
+  `,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
 
 function App() {
-  const mapRef = useRef<L.Map | null>(null);
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
   const [mapCenterLng, setMapCenterLng] = useState<number | null>(null);
@@ -95,23 +106,6 @@ function App() {
   }, [filteredGiveboxes, navigate]);
 
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    if (selectedGivebox) {
-      map.setView(selectedGivebox.coordinates, 14, { animate: true });
-      return;
-    }
-
-    if (!filteredGiveboxes.length) return;
-
-    const bounds = L.latLngBounds(
-      filteredGiveboxes.map((entry) => entry.coordinates)
-    );
-    map.fitBounds(bounds.pad(0.2));
-  }, [filteredGiveboxes, selectedGivebox]);
-
-  useEffect(() => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
       setIsSearching(false);
@@ -174,6 +168,7 @@ function App() {
         {giveboxes.map((givebox) => (
           <Marker
             key={givebox.id}
+            icon={givebox.categories.includes("books") ? bookIcon : giveboxIcon}
             position={givebox.coordinates}
             eventHandlers={{
               click: () => {
@@ -182,7 +177,22 @@ function App() {
                 navigate("/place/" + givebox.id);
               },
             }}
-          ></Marker>
+          >
+            <Tooltip
+              permanent
+              interactive
+              direction="right"
+              offset={[10, 0]}
+              eventHandlers={{
+                click: () => {
+                  setSelectedGiveboxId(givebox.id);
+                  navigate("/place/" + givebox.id);
+                },
+              }}
+            >
+              {givebox.name}
+            </Tooltip>
+          </Marker>
         ))}
       </MapContainer>
       <AnimatePresence>

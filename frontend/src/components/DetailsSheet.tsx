@@ -1,4 +1,4 @@
-import { CameraIcon, LinkIcon, XIcon } from "lucide-react";
+import { CameraIcon, LinkIcon, QrCode, XIcon } from "lucide-react";
 
 import type { Givebox } from "../api/giveboxes";
 import { Sheet } from "./Sheet";
@@ -44,15 +44,21 @@ export function DetailsSheet({ isOpen, onClose, givebox, isLoading }: Props) {
           Aktuelles Foto hochladen
         </label>
 
-        <a
-          href={givebox?.address}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium"
-        >
-          <LinkIcon className="text-gray-700" />
-          Wiki-Eintrag anzeigen
-        </a>
+        <div className="flex gap-2">
+          <a
+            href={givebox?.address}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium"
+          >
+            <LinkIcon className="text-gray-700" />
+            Wiki-Eintrag
+          </a>
+          <button className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium">
+            <QrCode className="text-gray-700" />
+            Code zeigen
+          </button>
+        </div>
 
         {isLoading ? (
           <div className="text-gray-500 text-center py-8">
