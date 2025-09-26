@@ -105,7 +105,7 @@ def get_json_from_wiki_table(data):
     if current:
         entries.append(current)
 
-    return json.dumps(entries, ensure_ascii=False, indent=2)
+    return entries
 
 
 

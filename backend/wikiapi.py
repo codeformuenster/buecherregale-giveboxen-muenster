@@ -34,9 +34,9 @@ def search(query):
 
 def getAll():
     give_boxes = get('Sharing/GiveBoxen', True)
-    #books = get('Sharing/Bücherschränke', True)
+    books = get('Sharing/Bücherschränke', True)
 
-    return give_boxes #+ books
+    return give_boxes + books
 
 def get(poi, allFormat = False):
     params_get = {
@@ -52,7 +52,7 @@ def get(poi, allFormat = False):
     
     wikitext = data['parse']['wikitext']['*']
     if not allFormat: wikitext = get_structured_data(wikitext)    
-    #else: wikitext = get_json_from_wiki_table(wikitext)
+    else: wikitext = get_json_from_wiki_table(wikitext)
 
     return wikitext
 
