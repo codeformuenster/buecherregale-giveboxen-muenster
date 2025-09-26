@@ -30,6 +30,8 @@ def search(query):
 
 
 def get(poi):
+    if poi == None: poi = 'Sharing/GiveBoxen'
+
     params_get = {
         'action': "parse",
         'page': poi,
@@ -38,5 +40,8 @@ def get(poi):
     }
     res = S.get(url=URL, params=params_get)
     data = res.json()
-    #wikitext = data['parse']['wikitext']['*']
-    return data
+    
+    if 'error' in data.keys(): return {'error': 'invalid poi'}
+    
+    wikitext = data['parse']['wikitext']['*']
+    return wikitext
