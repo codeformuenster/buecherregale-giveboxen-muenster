@@ -64,7 +64,6 @@ def get_structured_data(data):
     structured = structured_parse(sections)
     structured = remove_empty_sections(structured)
 
-    #json_structured = json.dumps(structured, ensure_ascii=False, indent=4)
     return structured
 
 #print(get_structured_data(data))

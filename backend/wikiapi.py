@@ -47,7 +47,7 @@ def get(poi):
     if 'error' in data.keys(): return {'error': 'invalid poi'}
     
     wikitext = data['parse']['wikitext']['*']
-    if poi != None: get_structured_data(wikitext)    
+    if poi != None: wikitext = get_structured_data(wikitext)    
 
     return wikitext
 
