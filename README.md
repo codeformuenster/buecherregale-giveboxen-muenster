@@ -34,7 +34,35 @@ Münsterhack 2025 Projekt Repository
 
 # Technische Infos
 
-Link zu den Daten: https://www.muenster4you.de/wiki/Sharing
+Link zu den Sharing-Daten (Giveboxen, Öffentliche Bücherregale) im "Portal für Münster"-Wiki: https://www.muenster4you.de/wiki/Sharing
+
+## Backend starten
+```bash
+cd backend
+python3 -m venv venv
+source venv/bin/activate
+pip3 install -r requirements.txt
+python3 app.py 
+```
+
+Beispiel-Endpunkte: 
+* http://127.0.0.1:5000/get - Liste aller POIs
+* http://127.0.0.1:5000/get?poi=Sharing/GiveBoxen/Gremmendorf - Details eines POI abrufen
+
+## Frontend starten
+```bash
+# run dev mode
+cd frontend
+npm install
+npm run dev
+
+# build production files  
+npm run build
+```
+
+Dann testen unter: 
+http://localhost:5173/
+
 
 
 ## Überlegungen zur Datenstruktur im Wiki
@@ -102,3 +130,6 @@ Detailseite angelegt und Fotos hochgeladen:
 * Sharing/Bücherschränke/FHMünster
 * Sharing/GiveBoxen/Gievenbeck
 * Sharing/GiveBoxen/Gremmendorf
+
+Quelle für die Icons: 
+https://www.svgrepo.com/svg/513520/book-closed
