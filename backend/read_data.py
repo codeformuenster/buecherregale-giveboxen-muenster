@@ -66,4 +66,49 @@ def get_structured_data(data):
 
     return structured
 
+
+
+
+
+def get_json_from_wiki_table(data):
+    """ Convert a simple wiki table to JSON format """
+    lines = data.split('\n')
+    entries = []
+    current = {}
+
+    for line in lines:
+        line = line.strip()
+        if line.startswith('|-'):
+            if current:  # Vorherigen Eintrag speichern
+                entries.append(current)
+            current = {}
+        elif line.startswith('|'):
+            value = line[1:].strip()
+
+            # Wiki-Link bereinigen: [[Link|Name]] → Name
+            match = re.match(r'\[\[.*\|(.*)\]\]', value)
+            if match:
+                value = match.group(1)
+
+            if 'Bezeichnung / ID' not in current:
+                current['Bezeichnung / ID'] = value
+            elif 'Adresse' not in current:
+                current['Adresse'] = value
+            elif 'Latitude' not in current:
+                current['Latitude'] = float(value)
+            elif 'Longitude' not in current:
+                current['Longitude'] = float(value)
+            elif 'Kategorie' not in current:
+                current['Kategorie'] = value
+
+    # Letzten Eintrag hinzufügen
+    if current:
+        entries.append(current)
+
+    return json.dumps(entries, ensure_ascii=False, indent=2)
+
+
+
+
+
 #print(get_structured_data(data))
