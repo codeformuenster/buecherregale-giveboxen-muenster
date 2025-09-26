@@ -15,7 +15,19 @@ def search():
     query = request.args.get('query')
     if query == None: return {'error': 'invalid query'}
 
-    data = wikiapi.search(query)
+    data_raw = wikiapi.search(query)
+
+    data_formatted = []
+    for element_raw in data_raw:
+      title = element_raw['title'].split('/')
+      if not title[0] == 'Sharing' or len(title) != 3: continue
+
+      element = {}
+
+    data = [element for element in data_raw if element['title'].startswith('Sharing')]    
+
+    
+
     return {'data': data}  
   
 if __name__ == '__main__':

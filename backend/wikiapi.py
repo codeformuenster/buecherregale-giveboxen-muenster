@@ -25,5 +25,5 @@ def search(query):
 
     res = S.get(url=URL, params=params_get)
     data = res.json()
-    wikitext = data
-    return wikitext
+    results = data['query']['search']
+    return results
