@@ -1,7 +1,7 @@
 import re
 import json
 
-data = '== Josefskirchplatz: ==\n\n=== Allgemeine Infos: ===\n\n* Name: Josefskirchplatz\n* Adresse: Hammer Stra\u00dfe/Josefskirchplatz\n\n=== Weitere Infos: ===\n\n* Typ: Givebox\n* Latitude: 51.9498914\n* Longitude: 7.6247309\n* \u00d6ffnungszeiten: immer\n* Betreiber: -\n* Link: https://www.st-joseph-muenster-sued.de/caritas-hilfe/givebox-an-der-josephs-kirche\n\n=== Fotos: ===\n[[Datei:Vorschau.jpg|zentriert|mini|Vorschaubild]]\n[[Datei:Inhalt Josef.jpg|zentriert|mini|Der aktuellste Stand der Give-Box]]\n\n=== Aktuelles Sortiment: ===\n{| class=\"wikitable\"\n|+\n!Tag\n!Beschreibung\n|-\n|Teller\n|Ein paar gestapelte Teller\n|-\n|Decken\n|Rote und wei\u00dfe Bettdecken\n|-\n|B\u00fccher\n|Gro\u00dfe Romane\n|}'
+#data = '== Josefskirchplatz: ==\n\n=== Allgemeine Infos: ===\n\n* Name: Josefskirchplatz\n* Adresse: Hammer Stra\u00dfe/Josefskirchplatz\n\n=== Weitere Infos: ===\n\n* Typ: Givebox\n* Latitude: 51.9498914\n* Longitude: 7.6247309\n* \u00d6ffnungszeiten: immer\n* Betreiber: -\n* Link: https://www.st-joseph-muenster-sued.de/caritas-hilfe/givebox-an-der-josephs-kirche\n\n=== Fotos: ===\n[[Datei:Vorschau.jpg|zentriert|mini|Vorschaubild]]\n[[Datei:Inhalt Josef.jpg|zentriert|mini|Der aktuellste Stand der Give-Box]]\n\n=== Aktuelles Sortiment: ===\n{| class=\"wikitable\"\n|+\n!Tag\n!Beschreibung\n|-\n|Teller\n|Ein paar gestapelte Teller\n|-\n|Decken\n|Rote und wei\u00dfe Bettdecken\n|-\n|B\u00fccher\n|Gro\u00dfe Romane\n|}'
 
 # 1️ Alle Sektionen extrahieren
 def parse_sections(data):
@@ -67,4 +67,4 @@ def get_structured_data(data):
     #json_structured = json.dumps(structured, ensure_ascii=False, indent=4)
     return structured
 
-print(get_structured_data(data))
+#print(get_structured_data(data))
