@@ -26,7 +26,7 @@ logging.debug("(headline font = '%s')", HEADLINE_FONT)
 
 S = requests.Session()
 
-URL = "https://portal.hey-muenster.de/w/api.php?"
+URL = "https://www.muenster4you.de/w/api.php?"
 
 
 
