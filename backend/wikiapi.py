@@ -55,14 +55,15 @@ def get(poi, allFormat = False):
         if not allFormat: wikitext = get_structured_data(wikitext)    
         else: wikitext = get_json_from_wiki_table(wikitext)
         
-        print('curr', wikitext['Vorschaubild'])
-
         wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
         wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
     except Exception as e:
         print('Error parsing wikitext:', e)
         logging.exception(f"Error while fetching POI data for '{poi}'")
-
+    
+    if not allFormat: wikitext = get_structured_data(wikitext)    
+    else: wikitext = get_json_from_wiki_table(wikitext)
+    
     return wikitext
 
 def alter_contents(location, items):   
