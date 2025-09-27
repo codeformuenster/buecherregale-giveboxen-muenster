@@ -129,7 +129,7 @@ def create_md_table_from_items(json_response):
 
 
 
-def build_wiki_page(data_old, json_response):#, page_title="Josefskirchplatz"):
+def build_wiki_page(data_old, json_response, new_image):#, page_title="Josefskirchplatz"):
     #Seiten-Titel aus "Allgemeine Infos" extrahieren
     page_title = data_old.get("Allgemeine Infos", {}).get("Name")
     wikitext = f"== {page_title} ==\n\n"
@@ -162,13 +162,17 @@ def build_wiki_page(data_old, json_response):#, page_title="Josefskirchplatz"):
 
     # ==== Weitere Fotos ====
     weitere_fotos = data_old.get("Weitere Fotos", [])
+
+    wikitext += "==== Weitere Fotos ====\n"
+    wikitext += f"[[Datei:{new_image}|zentriert|mini|Der aktuellste Stand der Give-Box]]\n"
+
     if weitere_fotos:
-        wikitext += "==== Weitere Fotos ====\n"
+
         for photo_url in weitere_fotos:
             match = re.search(r'/([^/]+\.jpg)$', photo_url)
             if match:
                 filename = match.group(1)
-                wikitext += f"[[Datei:{filename}|zentriert|mini|Der aktuellste Stand der Give-Box]]\n"
+                wikitext += f"[[Datei:{filename}|zentriert|mini|Ältere Bilder]]\n"
         wikitext += "\n"
 
     # === Aktuelles Sortiment ===
