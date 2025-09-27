@@ -19,7 +19,11 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd kiepenkiste
-            git pull
+
+            git reset --hard
+            git clean -fd
+
+            git pull origin main
             docker compose pull
             docker compose build
             docker compose up -d
