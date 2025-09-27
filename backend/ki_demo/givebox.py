@@ -30,6 +30,13 @@ class GateStatus(str, Enum):
     givebox_ok = "givebox_ok"
     givebox_not_ok = "givebox_not_ok"
 
+# -------- Füllstand --------
+class Fullness(str, Enum):
+    leer = "leer"
+    normal_gefuellt = "normal gefüllt"
+    voll = "voll"
+    ueberfuellt = "überfüllt"
+
 # -------- Pydantic-Modelle --------
 # Items (mit/ohne BBox)
 class ItemWithBBox(BaseModel):
@@ -41,11 +48,14 @@ class ItemNoBBox(BaseModel):
     name: str
     category: Category
 
-class ItemListWithBBox(BaseModel):
+# Kombimodelle: Items + Füllstand
+class VisionWithBBox(BaseModel):
     items: List[ItemWithBBox]
+    fullness: Fullness
 
-class ItemListNoBBox(BaseModel):
+class VisionNoBBox(BaseModel):
     items: List[ItemNoBBox]
+    fullness: Fullness
 
 # Gate-Modelle
 class GateItem(BaseModel):
@@ -93,11 +103,13 @@ BASE_SYSTEM_INSTRUCTIONS = (
     " books, clothes, toys, electronics, kitchen_items, household_goods, shoes, bags, games, decorations,"
     " tools, office_supplies, plants, food, other."
     " Keine Halluzinationen, keine Vermutungen."
-    " Wenn etwas unklar ist, lasse es weg."
+    " Wenn etwas unklar ist, lasse es weg (gilt für Objekte)."
     " Gib pro Objekt einen prägnanten 'name' (z. B. 'Roman: Der Prozess', 'Herren-T-Shirt blau', 'Wasserkocher')."
     " Für Bücher, wenn sicher lesbar, darfst du Titel (und optional Autor) als name verwenden."
     " Duplikate vermeiden (gleiche Objekte/Namen zusammenführen)."
     " Titel/Bezeichnungen in Originalsprache belassen."
+    " Zusätzlich MUSST du den Füllstand der Givebox einschätzen (fullness) und GENAU EINEN der Werte wählen:"
+    " 'leer', 'normal gefüllt', 'voll', 'überfüllt'."
 )
 
 def build_system_instructions(use_bbox: bool) -> str:
@@ -123,10 +135,12 @@ def build_user_content(image_data_uri: str, use_bbox: bool):
                 " Ordne jedes Objekt GENAU EINER der vorgegebenen Kategorien zu."
                 " Nur reale, im Bild erkennbare Dinge (keine Schilder, Deko-Texte o. Ä.,"
                 " es sei denn sie sind selbst Objekte). "
-                "Ausgabe bitte als strukturierte Liste von Items mit: name, category"
+                "Ausgabe als JSON-Objekt mit genau zwei Feldern:"
+                " 'items' (Liste von Objekten mit: name, category"
                 + (", bbox" if use_bbox else "")
-                + ". "
-                "Kategorien: books, clothes, toys, electronics, kitchen_items, household_goods, shoes, bags,"
+                + ") und 'fullness' (genau einer der Werte: 'leer', 'normal gefüllt', 'voll', 'überfüllt'). "
+                "Für Objekte gilt: wenn unklar, weglassen. Für 'fullness' MUSST du trotzdem einen einzelnen Wert wählen."
+                " Kategorien (für items): books, clothes, toys, electronics, kitchen_items, household_goods, shoes, bags,"
                 " games, decorations, tools, office_supplies, plants, food, other. "
                 "Deutsch ausgeben. "
                 + bbox_part
@@ -165,11 +179,11 @@ def analyze_image(
     timeout: Optional[int] = None,
 ) -> dict:
     """
-    Nimmt rohe Bildbytes entgegen, führt die Objekterkennung aus und gibt ein JSON-serialisierbares Dict zurück.
+    Nimmt rohe Bildbytes entgegen, führt die Objekterkennung + Füllstandseinordnung aus und gibt ein JSON-serialisierbares Dict zurück.
     (Ohne Gate)
     """
     image_data_uri = prepare_image_from_bytes(image_bytes)
-    ItemListModel = ItemListWithBBox if use_bbox else ItemListNoBBox
+    AnalysisModel = VisionWithBBox if use_bbox else VisionNoBBox
 
     client = OpenAI(timeout=timeout)
     resp = client.responses.parse(
@@ -178,10 +192,12 @@ def analyze_image(
             {"role": "system", "content": build_system_instructions(use_bbox)},
             {"role": "user", "content": build_user_content(image_data_uri, use_bbox)},
         ],
-        text_format=ItemListModel,
+        text_format=AnalysisModel,
     )
 
-    items = resp.output_parsed.items
+    parsed = resp.output_parsed
+    items = parsed.items
+    fullness = parsed.fullness
 
     # Deduplikation (case-insensitive Name)
     seen = set()
@@ -203,6 +219,7 @@ def analyze_image(
     return {
         "generated_at": datetime.now().isoformat(),
         "categories": [c.value for c in Category],
+        "fullness": fullness.value,
         "items": result_items,
     }
 
@@ -214,7 +231,7 @@ def analyze_image_with_gate(
     timeout: Optional[int] = None,
 ) -> dict:
     """
-    Führt zuerst das Givebox-Gate aus. Nur bei givebox_ok erfolgt die Objekterkennung.
+    Führt zuerst das Givebox-Gate aus. Nur bei givebox_ok erfolgt die Objekterkennung + Füllstand.
     """
     image_data_uri = prepare_image_from_bytes(image_bytes)
     client = OpenAI(timeout=timeout)
@@ -233,26 +250,29 @@ def analyze_image_with_gate(
     gate_ok = any(gi.category == GateStatus.givebox_ok for gi in gate_items)
 
     if not gate_ok:
-        # Frühzeitige Rückgabe – keine Items
+        # Frühzeitige Rückgabe – keine Items, fullness = null
         return {
             "generated_at": datetime.now().isoformat(),
             "gate_status": GateStatus.givebox_not_ok.value,
             "categories": [c.value for c in Category],
+            "fullness": None,
             "items": [],
         }
 
-    # 2) Objekterkennung (nur wenn Gate OK)
-    ItemListModel = ItemListWithBBox if use_bbox else ItemListNoBBox
+    # 2) Objekterkennung + Füllstand (nur wenn Gate OK)
+    AnalysisModel = VisionWithBBox if use_bbox else VisionNoBBox
     resp = client.responses.parse(
         model=model,
         input=[
             {"role": "system", "content": build_system_instructions(use_bbox)},
             {"role": "user", "content": build_user_content(image_data_uri, use_bbox)},
         ],
-        text_format=ItemListModel,
+        text_format=AnalysisModel,
     )
 
-    items = resp.output_parsed.items
+    parsed = resp.output_parsed
+    items = parsed.items
+    fullness = parsed.fullness
 
     # Deduplikation
     seen = set()
@@ -275,6 +295,7 @@ def analyze_image_with_gate(
         "generated_at": datetime.now().isoformat(),
         "gate_status": GateStatus.givebox_ok.value,
         "categories": [c.value for c in Category],
+        "fullness": fullness.value,
         "items": result_items,
     }
 
@@ -378,7 +399,7 @@ if __name__ == "__main__":
 #   --no-bbox           Bounding Boxes NICHT zurückgeben (nur name + category)
 #   --no-gate           Gate-Prüfung (Givebox ja/nein) überspringen
 #   --model <name>      OpenAI-Modell für die Objekterkennung (Default: gpt-5-mini)
-#   --gate-model <name> OpenAI-Modell für die Gate-Prüfung (Default: gpt-5-mini)
+#   --gate-model <name> OpenAI-Modell für das Gate (Default: gpt-5-mini)
 #   --timeout <sek>     Timeout für OpenAI-Client in Sekunden
 #   --out <pfad>        Pfad für JSON-Output (Default: stdout)
 #
