@@ -58,6 +58,8 @@ def get(poi, allFormat = False):
       if 'Vorschaubild' in wikitext: wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
       if 'Weitere Fotos' in wikitext: wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
 
+    wikitext['id'] = poi
+
     return wikitext
 
 def add_data(location, items, image):   
