@@ -1,12 +1,12 @@
 import { XIcon } from "lucide-react";
 
-import type { Givebox } from "../api/giveboxes";
+import type { ItemDetail } from "../api/get";
 import { Sheet } from "./Sheet";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  results: Givebox[];
+  results: ItemDetail[];
   isLoading: boolean;
   onSelect: (id: string) => void;
 };
@@ -37,22 +37,27 @@ export function SearchSheet({
           <div className="text-gray-500 text-center py-8">Suche läuft...</div>
         ) : results.length ? (
           <div className="flex flex-col gap-4">
-            {results.map((result) => (
-              <button
-                key={result.id}
-                type="button"
-                onClick={() => onSelect(result.id)}
-                className="text-left flex flex-col gap-1 rounded-2xl border border-gray-100 px-4 py-3 shadow-sm hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex flex-wrap items-center gap-1">
-                  <h2 className="text-gray-700 font-semibold">{result.name}</h2>
-                  <p className="text-gray-400">&middot; {result.address}</p>
-                </div>
-                <div className="text-gray-600 text-sm">
-                  {result.description}
-                </div>
-              </button>
-            ))}
+            {results.map((result) => {
+              console.log(result);
+              return (
+                <button
+                  onClick={() => onSelect(result.id)}
+                  key={result.id}
+                  type="button"
+                  className="text-left flex flex-col gap-1 rounded-2xl border border-gray-100 px-4 py-3 shadow-sm hover:bg-gray-50 transition-colors"
+                >
+                  <div className="flex flex-wrap items-center gap-1">
+                    <h2 className="text-gray-700 font-semibold">
+                      {result.name}
+                    </h2>
+                    <p className="text-gray-400">&middot; {result.address}</p>
+                  </div>
+                  <div className="text-gray-600 text-sm">
+                    {result.description}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         ) : (
           <div className="text-gray-500 text-center py-8">

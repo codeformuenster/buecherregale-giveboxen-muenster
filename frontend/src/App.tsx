@@ -1,17 +1,15 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useMemo, useRef, useState, type ChangeEvent } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 
-import { fetchGiveboxes, searchGiveboxes, type Givebox } from "./api/giveboxes";
 import { DetailsSheet } from "./components/DetailsSheet";
-import { FilterChips, type Category } from "./components/FilterChips";
 import { SearchBar } from "./components/SearchBar";
 import { SearchSheet } from "./components/SearchSheet";
 
 import { AnimatePresence, motion } from "motion/react";
 import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 import { useNavigate, useParams } from "react-router";
-import { getItems, type Item } from "./api/get";
+import { getItems, searchItems, type Item, type ItemDetail } from "./api/get";
 import { MapController } from "./components/MapController";
 
 const bookIcon = L.divIcon({
@@ -49,8 +47,6 @@ const giveboxOpeningHoursIcon = L.divIcon({
 });
 
 function App() {
-  const markersLayerRef = useRef<L.LayerGroup | null>(null);
-
   const [mapCenterLng, setMapCenterLng] = useState<number | null>(null);
   const [mapCenterLat, setMapCenterLat] = useState<number | null>(null);
 
@@ -65,66 +61,9 @@ function App() {
     });
   }, []);
 
-  const [giveboxes, setGiveboxes] = useState<Givebox[]>([]);
-  const [isLoadingGiveboxes, setIsLoadingGiveboxes] = useState(false);
-  const [selectedGiveboxId, setSelectedGiveboxId] = useState<string | null>(
-    null
-  );
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<Givebox[]>([]);
+  const [searchResults, setSearchResults] = useState<ItemDetail[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-
-  useEffect(() => {
-    let isActive = true;
-
-    setIsLoadingGiveboxes(true);
-
-    fetchGiveboxes()
-      .then((data) => {
-        if (!isActive) return;
-        setGiveboxes(data);
-
-        if (data.length > 0) {
-          setSelectedGiveboxId(data[0].id);
-        }
-      })
-      .finally(() => {
-        if (!isActive) return;
-        setIsLoadingGiveboxes(false);
-      });
-
-    return () => {
-      isActive = false;
-    };
-  }, [navigate]);
-
-  const filteredGiveboxes = useMemo(() => {
-    if (!id) return giveboxes;
-    return giveboxes.filter((entry) =>
-      entry.categories.includes(id as Category)
-    );
-  }, [giveboxes, id]);
-
-  const selectedGivebox = useMemo(() => {
-    if (!selectedGiveboxId) return null;
-    return giveboxes.find((entry) => entry.id === selectedGiveboxId) ?? null;
-  }, [giveboxes, selectedGiveboxId]);
-
-  useEffect(() => {
-    const layerGroup = markersLayerRef.current;
-    if (!layerGroup) return;
-
-    layerGroup.clearLayers();
-
-    filteredGiveboxes.forEach((entry) => {
-      const marker = L.marker(entry.coordinates);
-      marker.on("click", () => {
-        setSelectedGiveboxId(entry.id);
-        navigate("/place/" + entry.id);
-      });
-      marker.addTo(layerGroup);
-    });
-  }, [filteredGiveboxes, navigate]);
 
   useEffect(() => {
     if (!searchQuery.trim()) {
@@ -136,7 +75,7 @@ function App() {
     let isActive = true;
     setIsSearching(true);
 
-    searchGiveboxes(searchQuery, id as Category)
+    searchItems(searchQuery)
       .then((results) => {
         if (!isActive) return;
         setSearchResults(results);
@@ -166,11 +105,7 @@ function App() {
   }, []);
 
   const handleSearchResultSelect = (id: string) => {
-    setSelectedGiveboxId(id);
-    const selected = giveboxes.find((entry) => entry.id === id);
-    if (selected) {
-      setSearchQuery(selected.name);
-    }
+    setSearchQuery("");
     navigate("/place/" + id);
     setSearchResults([]);
   };
@@ -193,7 +128,13 @@ function App() {
         {items.map((item) => (
           <Marker
             key={item.id}
-            icon={item.category === "Givebox" ? giveboxIcon : item.category === "Givebox \"AWM Wechselstube\"" ? giveboxOpeningHoursIcon : bookIcon}
+            icon={
+              item.category === "Givebox"
+                ? giveboxIcon
+                : item.category === 'Givebox "AWM Wechselstube"'
+                ? giveboxOpeningHoursIcon
+                : bookIcon
+            }
             position={[item.latitude, item.longitude]}
             eventHandlers={{
               click: () => {
@@ -210,7 +151,6 @@ function App() {
               offset={[10, 0]}
               eventHandlers={{
                 click: () => {
-                  setSelectedGiveboxId(item.id);
                   navigate("/place/" + item.id);
                 },
               }}
@@ -259,8 +199,6 @@ function App() {
         <DetailsSheet
           isOpen={Boolean(category === "place" && id)}
           onClose={() => navigate("/")}
-          givebox={selectedGivebox}
-          isLoading={isLoadingGiveboxes}
         />
         <SearchSheet
           isOpen={Boolean(category === "search" || category === "category")}

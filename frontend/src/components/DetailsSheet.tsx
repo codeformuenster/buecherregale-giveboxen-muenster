@@ -3,14 +3,11 @@ import { CameraIcon, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { getItem, uploadImage, type ItemDetail } from "../api/get";
-import type { Givebox } from "../api/giveboxes";
 import { Sheet } from "./Sheet";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  givebox: Givebox | null;
-  isLoading: boolean;
 };
 
 export function DetailsSheet({ isOpen, onClose }: Props) {

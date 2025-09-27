@@ -4,7 +4,7 @@ export type Item = {
   latitude: number;
   longitude: number;
   category: string;
-  name: string
+  name: string;
 };
 
 export async function getItems(): Promise<Item[]> {
@@ -23,6 +23,7 @@ export async function getItems(): Promise<Item[]> {
 }
 
 export type ItemDetail = {
+  id: string;
   name: string;
   address: string;
   description: string;
@@ -53,6 +54,7 @@ export async function getItem(id: string): Promise<ItemDetail> {
     });
 
   return {
+    id: data["id"],
     name: data["Allgemeine Infos"]["Name"],
     address: data["Allgemeine Infos"]["Adresse"],
     description: data["Weitere Infos"]["Beschreibung"],
@@ -82,4 +84,27 @@ export async function uploadImage(
   const data = await response.json();
   alert(data.data);
   return data.data;
+}
+
+export async function searchItems(query: string): Promise<ItemDetail[]> {
+  const response = await fetch(`/api/search?query=${query}`);
+  const data = await response.json();
+  return data.data?.map((item: any) => ({
+    id: item.data["id"],
+    name: item.data["Allgemeine Infos"]["Name"],
+    address: item.data["Allgemeine Infos"]["Adresse"],
+    description: item.data["Weitere Infos"]["Beschreibung"],
+    latitude: item.data["Weitere Infos"]["Latitude"],
+    longitude: item.data["Weitere Infos"]["Longitude"],
+    type: item.data["Weitere Infos"]["Typ"],
+    previewImage: item.data["Vorschaubild"]?.[0] ?? null,
+    images: item.data["Weitere Fotos"] ?? null,
+    alwaysOpen: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
+    openingHours: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
+    items:
+      item.data["Aktuelles Sortiment"]?.map((sortimentItem: any[]) => ({
+        name: sortimentItem[0],
+        description: sortimentItem[1],
+      })) ?? [],
+  }));
 }
