@@ -31,14 +31,13 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
     }
   };
 
-  useEffect(() => {
+  const fetchItemData = () => {
     if (itemId) {
       setDataState("loading");
       setItem(null);
       setContentExpanded(false);
       getItem(itemId)
         .then((data) => {
-          console.log(data);
           setItem(data);
           setContentExpanded(Boolean(!data.items || data.items.length < 3));
           setDataState("success");
@@ -49,7 +48,32 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
           setContentExpanded(false);
         });
     }
+  };
+
+  useEffect(() => {
+    fetchItemData();
   }, [itemId]);
+
+  useEffect(() => {
+    if (isOpen && itemId) {
+      // Set up interval to reload data every 5 seconds
+      const interval = setInterval(() => {
+        getItem(itemId)
+          .then((data) => {
+            setItem(data);
+            setContentExpanded(Boolean(!data.items || data.items.length < 3));
+            setDataState("success");
+          })
+          .catch(() => {
+            setDataState("error");
+            setItem(null);
+            setContentExpanded(false);
+          });
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isOpen, itemId]);
 
   let child = null;
 
