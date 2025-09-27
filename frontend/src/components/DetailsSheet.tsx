@@ -1,4 +1,4 @@
-import { CameraIcon, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
+import { CameraIcon, Check, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -21,13 +21,33 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
   );
 
   const [contentExpanded, setContentExpanded] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      uploadImage(file, itemId ?? "").then((data) => {
-        console.log(data);
-      });
+    if (file && !isUploading && !uploadSuccess) {
+      setIsUploading(true);
+      uploadImage(file, itemId ?? "")
+        .then((data) => {
+          console.log(data);
+          // Reset the input value to allow uploading the same file again
+          event.target.value = '';
+          // Show success animation
+          setUploadSuccess(true);
+          // Reset success state after 2 seconds
+          setTimeout(() => {
+            setUploadSuccess(false);
+          }, 2000);
+        })
+        .catch((error) => {
+          console.error('Upload failed:', error);
+          // Reset the input value on error as well
+          event.target.value = '';
+        })
+        .finally(() => {
+          setIsUploading(false);
+        });
     }
   };
 
@@ -163,7 +183,13 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
         </button>
       </div>
       <div className="px-4 flex flex-col gap-2 pt-4">
-        <label className="w-full bg-black text-white rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium cursor-pointer active:opacity-50 transition-opacity">
+        <label className={`w-full rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium transition-all duration-300 ${
+          uploadSuccess 
+            ? 'bg-green-500 text-white cursor-default' 
+            : isUploading 
+            ? 'bg-black text-white opacity-50 cursor-not-allowed' 
+            : 'bg-black text-white cursor-pointer active:opacity-50'
+        }`}>
           <input
             type="file"
             capture="environment"
@@ -171,9 +197,16 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
             accept="image/jpeg,image/png"
             className="sr-only"
             onChange={handleImageUpload}
+            disabled={isUploading || uploadSuccess}
           />
-          <CameraIcon className="text-gray-100" />
-          Aktuelles Foto hochladen
+          {uploadSuccess ? (
+            <Check className="text-white" />
+          ) : isUploading ? (
+            <Loader className="text-gray-100 animate-spin" />
+          ) : (
+            <CameraIcon className="text-gray-100" />
+          )}
+          {uploadSuccess ? 'Danke fürs Mithelfen!' : isUploading ? 'Wird hochgeladen...' : 'Aktuelles Foto hochladen'}
         </label>
 
         <div className="flex gap-2">

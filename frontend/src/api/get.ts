@@ -82,7 +82,6 @@ export async function uploadImage(
     body: formData,
   });
   const data = await response.json();
-  alert(data.data);
   return data.data;
 }
 
