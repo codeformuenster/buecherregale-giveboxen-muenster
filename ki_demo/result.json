@@ -1,0 +1,326 @@
+{
+  "generated_at": "2025-09-26T21:25:27.744493",
+  "categories": [
+    "books",
+    "clothes",
+    "toys",
+    "electronics",
+    "kitchen_items",
+    "household_goods",
+    "shoes",
+    "bags",
+    "games",
+    "decorations",
+    "tools",
+    "office_supplies",
+    "plants",
+    "food",
+    "other"
+  ],
+  "items": [
+    {
+      "name": "Buch, roter Rücken",
+      "category": "books",
+      "bbox": [
+        162,
+        13,
+        9,
+        78
+      ],
+      "confidence": 0.76
+    },
+    {
+      "name": "Buch, hellgrüner Rücken",
+      "category": "books",
+      "bbox": [
+        173,
+        13,
+        26,
+        78
+      ],
+      "confidence": 0.7
+    },
+    {
+      "name": "Buch, hellgrauer Rücken",
+      "category": "books",
+      "bbox": [
+        201,
+        13,
+        18,
+        78
+      ],
+      "confidence": 0.66
+    },
+    {
+      "name": "Buch, schwarzer Rücken",
+      "category": "books",
+      "bbox": [
+        222,
+        13,
+        30,
+        78
+      ],
+      "confidence": 0.74
+    },
+    {
+      "name": "PIPER (weißes Rückenschild)",
+      "category": "books",
+      "bbox": [
+        255,
+        13,
+        24,
+        78
+      ],
+      "confidence": 0.92
+    },
+    {
+      "name": "Buch, beiger Rücken",
+      "category": "books",
+      "bbox": [
+        282,
+        13,
+        17,
+        78
+      ],
+      "confidence": 0.64
+    },
+    {
+      "name": "Buch, heller Rücken",
+      "category": "books",
+      "bbox": [
+        302,
+        13,
+        15,
+        78
+      ],
+      "confidence": 0.63
+    },
+    {
+      "name": "Buch, cremefarbener Rücken",
+      "category": "books",
+      "bbox": [
+        320,
+        13,
+        18,
+        78
+      ],
+      "confidence": 0.62
+    },
+    {
+      "name": "PIPER (heller Rücken)",
+      "category": "books",
+      "bbox": [
+        341,
+        13,
+        22,
+        78
+      ],
+      "confidence": 0.88
+    },
+    {
+      "name": "Buch, dunkelgrauer Rücken",
+      "category": "books",
+      "bbox": [
+        366,
+        13,
+        40,
+        78
+      ],
+      "confidence": 0.71
+    },
+    {
+      "name": "Per Anhalter durch die Galaxis (Douglas Adams)",
+      "category": "books",
+      "bbox": [
+        412,
+        12,
+        302,
+        80
+      ],
+      "confidence": 0.82
+    },
+    {
+      "name": "Buch, grüner Rücken",
+      "category": "books",
+      "bbox": [
+        104,
+        250,
+        22,
+        28
+      ],
+      "confidence": 0.88
+    },
+    {
+      "name": "Buch, schwarzer schmaler Rücken",
+      "category": "books",
+      "bbox": [
+        127,
+        250,
+        11,
+        28
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Buch, weißer Rücken",
+      "category": "books",
+      "bbox": [
+        157,
+        250,
+        18,
+        28
+      ],
+      "confidence": 0.82
+    },
+    {
+      "name": "Buch, schmaler weißer Rücken",
+      "category": "books",
+      "bbox": [
+        177,
+        250,
+        13,
+        28
+      ],
+      "confidence": 0.75
+    },
+    {
+      "name": "Buch, weißer Rücken mit dunklem Text",
+      "category": "books",
+      "bbox": [
+        213,
+        250,
+        23,
+        28
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Buch, breiter weißer Rücken",
+      "category": "books",
+      "bbox": [
+        237,
+        250,
+        30,
+        28
+      ],
+      "confidence": 0.76
+    },
+    {
+      "name": "Mehrere Bücher, mittlerer Bereich (einzeln erkennbar)",
+      "category": "books",
+      "bbox": [
+        269,
+        250,
+        110,
+        28
+      ],
+      "confidence": 0.6
+    },
+    {
+      "name": "Buch, schwarzer Rücken mit orange Text",
+      "category": "books",
+      "bbox": [
+        381,
+        250,
+        165,
+        28
+      ],
+      "confidence": 0.86
+    },
+    {
+      "name": "Buch, schmal, beiger Rücken",
+      "category": "books",
+      "bbox": [
+        203,
+        632,
+        11,
+        180
+      ],
+      "confidence": 0.6
+    },
+    {
+      "name": "Buch, türkis/hellblauer Rücken",
+      "category": "books",
+      "bbox": [
+        218,
+        622,
+        22,
+        210
+      ],
+      "confidence": 0.75
+    },
+    {
+      "name": "PIPER (weißes Buch mit schwarzem Top-Label)",
+      "category": "books",
+      "bbox": [
+        243,
+        617,
+        16,
+        215
+      ],
+      "confidence": 0.85
+    },
+    {
+      "name": "Buch, blauer Rücken (dicker)",
+      "category": "books",
+      "bbox": [
+        263,
+        616,
+        34,
+        216
+      ],
+      "confidence": 0.8
+    },
+    {
+      "name": "Buch, helles Cover mit Strandbild",
+      "category": "books",
+      "bbox": [
+        298,
+        628,
+        29,
+        200
+      ],
+      "confidence": 0.78
+    },
+    {
+      "name": "Sarah Harvey (gelber Rücken)",
+      "category": "books",
+      "bbox": [
+        333,
+        622,
+        34,
+        210
+      ],
+      "confidence": 0.87
+    },
+    {
+      "name": "Buch, dunkler blauer Rücken (schmal)",
+      "category": "books",
+      "bbox": [
+        370,
+        622,
+        32,
+        215
+      ],
+      "confidence": 0.7
+    },
+    {
+      "name": "Buch: Bitte nicht füttern (Sarah Harvey)",
+      "category": "books",
+      "bbox": [
+        536,
+        644,
+        180,
+        360
+      ],
+      "confidence": 0.97
+    }
+  ],
+  "meta": {
+    "image_scale": {
+      "width": 1200,
+      "height": 1600
+    },
+    "refine_books": true
+  }
+}
