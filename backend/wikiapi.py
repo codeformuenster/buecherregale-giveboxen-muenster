@@ -77,7 +77,7 @@ def add_data(location, items, image):
 
     res = S.post(URL, files=file, data=params_post)
     data = res.json()
-    
+
     new_page = build_wiki_page(get(location), items, filename)
     
     params_post = {
@@ -89,7 +89,7 @@ def add_data(location, items, image):
  
     res = S.post(URL, data=params_post)
 
-    return res
+    return [filename, data]
 
 
 def _login():

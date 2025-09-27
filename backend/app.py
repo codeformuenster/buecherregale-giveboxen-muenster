@@ -80,8 +80,6 @@ def set_items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
  
-    print('file', file)
-
     location = request.form['locationId']
     return wikiapi.add_data(location, image_contents, img_bytes)
 
