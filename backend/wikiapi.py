@@ -57,8 +57,8 @@ def get(poi, allFormat = False):
     if not allFormat: 
       if 'Vorschaubild' in wikitext: wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
       if 'Weitere Fotos' in wikitext: wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
+      wikitext["id"] = poi
 
-    wikitext['id'] = poi
 
     return wikitext
 
