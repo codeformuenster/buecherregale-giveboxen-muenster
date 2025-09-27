@@ -62,3 +62,20 @@ export async function getItem(id: string): Promise<ItemDetail> {
     items: items,
   };
 }
+
+export async function uploadImage(
+  image: File,
+  locationId: string
+): Promise<string> {
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("locationId", locationId);
+
+  const response = await fetch(`/api/set_items`, {
+    method: "POST",
+    body: formData,
+  });
+  const data = await response.json();
+  alert(data.data);
+  return data.data;
+}

@@ -2,7 +2,7 @@ import { CameraIcon, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
 
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { getItem, type ItemDetail } from "../api/get";
+import { getItem, uploadImage, type ItemDetail } from "../api/get";
 import type { Givebox } from "../api/giveboxes";
 import { Sheet } from "./Sheet";
 
@@ -24,6 +24,15 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
   );
 
   const [contentExpanded, setContentExpanded] = useState(false);
+
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      uploadImage(file, itemId ?? "").then((data) => {
+        console.log(data);
+      });
+    }
+  };
 
   useEffect(() => {
     if (itemId) {
@@ -136,6 +145,7 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
             multiple={false}
             accept="image/jpeg,image/png"
             className="sr-only"
+            onChange={handleImageUpload}
           />
           <CameraIcon className="text-gray-100" />
           Aktuelles Foto hochladen
