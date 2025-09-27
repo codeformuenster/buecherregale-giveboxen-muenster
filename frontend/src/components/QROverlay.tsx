@@ -1,6 +1,5 @@
 import { XIcon } from "lucide-react";
-import QRCode from "qrcode";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   isOpen: boolean;
@@ -9,32 +8,39 @@ type Props = {
 };
 
 export function QROverlay({ isOpen, onClose, url }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [qrGenerated, setQrGenerated] = useState(false);
+  const [qrImageUrl, setQrImageUrl] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (isOpen && canvasRef.current && !qrGenerated) {
-      QRCode.toCanvas(canvasRef.current, url, {
-        width: 300,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
-      }, (error) => {
-        if (error) {
-          console.error('QR Code generation failed:', error);
-        } else {
-          setQrGenerated(true);
-        }
-      });
+    if (isOpen && url) {
+      setIsLoading(true);
+      setError("");
+      
+      // Generate QR code URL using QuickChart API
+      const encodedUrl = encodeURIComponent(url);
+      const qrUrl = `https://quickchart.io/qr?text=${encodedUrl}&size=300&margin=2&dark=000000&light=ffffff`;
+      
+      // Preload the image to check if it loads successfully
+      const img = new Image();
+      img.onload = () => {
+        setQrImageUrl(qrUrl);
+        setIsLoading(false);
+      };
+      img.onerror = () => {
+        setError("QR Code generation failed");
+        setIsLoading(false);
+      };
+      img.src = qrUrl;
     }
-  }, [isOpen, url, qrGenerated]);
+  }, [isOpen, url]);
 
-  // Reset QR generation state when overlay closes
+  // Reset state when overlay closes
   useEffect(() => {
     if (!isOpen) {
-      setQrGenerated(false);
+      setQrImageUrl("");
+      setError("");
+      setIsLoading(false);
     }
   }, [isOpen]);
 
@@ -52,10 +58,28 @@ export function QROverlay({ isOpen, onClose, url }: Props) {
 
       {/* QR Code */}
       <div className="flex flex-col items-center">
-        <canvas 
-          ref={canvasRef}
-          className="border border-gray-200 rounded-lg shadow-lg"
-        />
+        {isLoading && (
+          <div className="w-[300px] h-[300px] border border-gray-200 rounded-lg shadow-lg flex items-center justify-center bg-gray-50">
+            <div className="text-gray-500">Generating QR Code...</div>
+          </div>
+        )}
+        
+        {error && (
+          <div className="w-[300px] h-[300px] border border-red-200 rounded-lg shadow-lg flex items-center justify-center bg-red-50">
+            <div className="text-red-500 text-center">{error}</div>
+          </div>
+        )}
+        
+        {qrImageUrl && !isLoading && !error && (
+          <img 
+            src={qrImageUrl}
+            alt="QR Code"
+            className="border border-gray-200 rounded-lg shadow-lg"
+            width={300}
+            height={300}
+          />
+        )}
+        
         <p className="text-gray-600 text-center mt-4 max-w-md px-8 text-balance">
           Dieser QR-Code führt zur Seite der Givebox. Dort kannst du Fotos hochladen und der Inhalt wird als Text und Kategorien ins Wiki übernommen und ist sofort für alle durchsuchbar.
         </p>
