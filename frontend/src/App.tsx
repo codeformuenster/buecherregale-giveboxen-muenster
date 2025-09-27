@@ -202,7 +202,11 @@ function App() {
         />
         <SearchSheet
           isOpen={Boolean(category === "search" || category === "category")}
-          onClose={() => navigate("/")}
+          onClose={() => {
+            setSearchQuery("");
+            setSearchResults([]);
+            return navigate("/");
+          }}
           results={searchResults}
           isLoading={isSearching}
           onSelect={handleSearchResultSelect}

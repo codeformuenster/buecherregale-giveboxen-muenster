@@ -25,7 +25,7 @@ export function SearchSheet({
           <h1 className=" text-xl font-semibold pt-0.75">Suchergebnisse</h1>
         </div>
         <button
-          className="bg-gray-100 text-gray-400 w-9 h-9 flex items-center justify-center rounded-full -mr-2"
+          className="pointer-events-auto bg-gray-100 text-gray-400 w-9 h-9 flex items-center justify-center rounded-full -mr-2"
           onClick={onClose}
         >
           <XIcon />
