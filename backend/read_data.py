@@ -122,6 +122,13 @@ def create_md_table(data):
     return wiki_table
 
 
+def create_md_table_from_items(json_response):
+    items = json_response.get("items", [])
+    return create_md_table({"items": items})
+
+
+
+
 def build_wiki_page(data_old, json_response):#, page_title="Josefskirchplatz"):
     #Seiten-Titel aus "Allgemeine Infos" extrahieren
     page_title = data_old.get("Allgemeine Infos", {}).get("Name")
