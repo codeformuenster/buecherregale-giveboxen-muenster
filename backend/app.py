@@ -44,10 +44,13 @@ def get():
  
 @app.route('/set_items', methods = ['POST'])
 def set_items():
-    request_data = request.json
+    request_data = request.files
+
+    print(request_data[0])
 
     location = request_data['location']
     items = request_data['items']
+    
 
     return wikiapi.alter_contents(request_data, items)
 

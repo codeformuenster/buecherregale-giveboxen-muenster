@@ -55,13 +55,21 @@ def get(poi, allFormat = False):
     else: wikitext = get_json_from_wiki_table(wikitext)
  
     if not allFormat: 
-      wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
-      wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
+      if 'Vorschaubild' in wikitext: wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
+      if 'Weitere Fotos' in wikitext: wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
 
     return wikitext
 
-def alter_contents(location, items):   
+def add_data(location, items, image):   
     token = _login()
+    
+    params_post = {
+      "action": "upload",
+      "filename": f"{location}.jpg",
+      "format": "json",
+      "token": token,
+      "ignorewarnings": 1
+    }
 
     return token
 
@@ -96,8 +104,6 @@ def _login():
     res = S.get(url=URL, params=params_get)
     data = res.json()
 
-    print(data)
-    
     return data["query"]["tokens"]["csrftoken"]
 
 def _get_image_urls(images):
