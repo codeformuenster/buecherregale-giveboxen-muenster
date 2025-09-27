@@ -23,19 +23,24 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
     "loading"
   );
 
+  const [contentExpanded, setContentExpanded] = useState(false);
+
   useEffect(() => {
     if (itemId) {
       setDataState("loading");
       setItem(null);
+      setContentExpanded(false);
       getItem(itemId)
         .then((data) => {
           console.log(data);
           setItem(data);
+          setContentExpanded(Boolean(!data.items || data.items.length < 3));
           setDataState("success");
         })
         .catch(() => {
           setDataState("error");
           setItem(null);
+          setContentExpanded(false);
         });
     }
   }, [itemId]);
@@ -58,16 +63,38 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
         <>
           <div>
             <h2 className="text-gray-700 mt-4 font-semibold">Inhalt</h2>
-            <ul className="text-gray-700 list-disc ml-5 marker:text-gray-400">
+            <ul
+              className={`text-gray-700 ${
+                contentExpanded
+                  ? "max-h-auto"
+                  : "max-h-[65px] overflow-hidden mask-b-from-20%"
+              }`}
+            >
               {item?.items?.map((item, index) => (
                 <li key={index} className="">
-                  {item.description}
+                  - {item.description}
                 </li>
               ))}
             </ul>
+            {!contentExpanded && (
+              <button
+                className="text-gray-500 text-sm"
+                onClick={() => setContentExpanded(!contentExpanded)}
+              >
+                Mehr anzeigen
+              </button>
+            )}
           </div>
           {item?.images?.length ? (
             <div className="grid grid-cols-2 gap-4 mt-4">
+              {item.previewImage && (
+                <img
+                  key={`${item.name}-image-0`}
+                  className="w-full h-full object-cover rounded-xl"
+                  src={item.previewImage}
+                  alt={`${item.name} Vorschaubild`}
+                />
+              )}
               {item.images.map((imageUrl, index) => (
                 <img
                   key={`${item.name}-image-${index}`}
