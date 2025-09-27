@@ -44,15 +44,6 @@ def get():
  
 @app.route('/set_items', methods = ['POST'])
 def set_items():
-    request_data = request.files
-
-    print(request_data[0])
-
-    location = request_data['location']
-    items = request_data['items']
-
-    return wikiapi.alter_contents(request_data, items)
-    
     no_gate = request.args.get('no_gate') == '1'
     no_bbox = request.args.get('no_bbox') == '1'
 
@@ -70,6 +61,7 @@ def set_items():
     else:
         return jsonify({"error": "provide image (multipart 'image') or JSON {'url': ...}"}), 400
 
+    image_contents = {}
     try:
         if no_gate:
             data = givebox.analyze_image(
@@ -84,10 +76,12 @@ def set_items():
         # bei Gate negativ sinnvollen HTTP-Code setzen (422)
         if not no_gate and data.get("gate_status") == "givebox_not_ok":
             return jsonify(data), 422
-        return jsonify(data)
+        image_contents = jsonify(data)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
+  
+    return image_contents
+    return wikiapi.alter_contents(request_data, items)
     
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
