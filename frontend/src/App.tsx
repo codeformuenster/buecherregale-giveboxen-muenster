@@ -155,7 +155,7 @@ function App() {
                 },
               }}
             >
-              {item.id}
+              {item.name}
             </Tooltip>
           </Marker>
         ))}
