@@ -1,6 +1,6 @@
 import { MoreVerticalIcon, SearchIcon, SquareArrowOutUpRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { Category } from "./FilterChips";
 import { FilterChips } from "./FilterChips";
 
@@ -34,6 +34,27 @@ export const SearchBar = ({ value, onChange, onFocus }: SearchBarProps) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
 
+  // Prevent body scrolling when popup is open using touchmove prevention
+  useEffect(() => {
+    const preventTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    if (popoverOpen) {
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('touchmove', preventTouchMove, { passive: false });
+    } else {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('touchmove', preventTouchMove);
+    }
+
+    // Cleanup function to restore scrolling when component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+      document.removeEventListener('touchmove', preventTouchMove);
+    };
+  }, [popoverOpen]);
+
   const handleCategoryClick = (category: Category | null) => {
     setActiveCategory(category);
     onChange({
@@ -57,7 +78,7 @@ export const SearchBar = ({ value, onChange, onFocus }: SearchBarProps) => {
             />
           </div>
         </motion.div>
-        <motion.div className="w-13 h-13 relative" whileTap={{ scale: 0.98 }}>
+        <motion.div className="w-13 h-13 relative">
           <AnimatePresence>
             {popoverOpen && (
               <motion.div
@@ -78,11 +99,11 @@ export const SearchBar = ({ value, onChange, onFocus }: SearchBarProps) => {
             }}
           >
             {popoverOpen ? (
-              <div className="flex-col p-2 w-60">
-                <div className="flex items-center gap-2 px-4 py-3">
+              <div className="flex-col p-2 w-60 pointer-events-auto">
+                <a href="https://www.muenster4you.de/wiki/Sharing/GiveBoxen" target="_blank" className="flex items-center gap-2 px-4 py-3">
                   <SquareArrowOutUpRight className="w-4 h-4" />
                   Box hinzufügen
-                </div>
+                </a>
                 <div className="flex items-center gap-2 px-4 py-3">
                   <svg
                     className="w-4 h-4 rounded-sm"
@@ -101,6 +122,7 @@ export const SearchBar = ({ value, onChange, onFocus }: SearchBarProps) => {
               <motion.button
                 className="pointer-events-auto w-13 h-13 flex items-center justify-center"
                 onClick={() => setPopoverOpen(!popoverOpen)}
+                whileTap={{ scale: 0.98 }}
               >
                 <MoreVerticalIcon className="w-6 h-6 text-black/70" />
               </motion.button>
