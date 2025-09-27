@@ -50,18 +50,9 @@ def set_items():
 
     location = request_data['location']
     items = request_data['items']
-    
 
     return wikiapi.alter_contents(request_data, items)
-
-
-
-@app.route('/givebox/analyze', methods=['POST'])
-def givebox_analyze():
-    """
-    Multipart (image) ODER JSON {"url": "..."} akzeptieren.
-    Optional: ?no_gate=1 & ?no_bbox=1
-    """
+    
     no_gate = request.args.get('no_gate') == '1'
     no_bbox = request.args.get('no_bbox') == '1'
 
