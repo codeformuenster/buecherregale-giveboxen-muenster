@@ -89,22 +89,34 @@ export async function uploadImage(
 export async function searchItems(query: string): Promise<ItemDetail[]> {
   const response = await fetch(`/api/search?query=${query}`);
   const data = await response.json();
-  return data.data?.map((item: any) => ({
-    id: item.data["id"],
-    name: item.data["Allgemeine Infos"]["Name"],
-    address: item.data["Allgemeine Infos"]["Adresse"],
-    description: item.data["Weitere Infos"]["Beschreibung"],
-    latitude: item.data["Weitere Infos"]["Latitude"],
-    longitude: item.data["Weitere Infos"]["Longitude"],
-    type: item.data["Weitere Infos"]["Typ"],
-    previewImage: item.data["Vorschaubild"]?.[0] ?? null,
-    images: item.data["Weitere Fotos"] ?? null,
-    alwaysOpen: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
-    openingHours: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
-    items:
-      item.data["Aktuelles Sortiment"]?.map((sortimentItem: any[]) => ({
-        name: sortimentItem[0],
-        description: sortimentItem[1],
-      })) ?? [],
-  }));
+
+  console.log(data.data);
+  return data.data?.map((item: any) => {
+    const items = item.data["Aktuelles Sortiment"]
+      ?.flat()
+      ?.filter((item: string) => item.length > 4)
+      ?.map((item: string) => {
+        const [tag, description] = item.split("||");
+
+        return {
+          name: tag.trim(),
+          description: description.trim(),
+        };
+      });
+
+    return ({
+      id: item.data["id"],
+      name: item.data["Allgemeine Infos"]["Name"],
+      address: item.data["Allgemeine Infos"]["Adresse"],
+      description: item.data["Weitere Infos"]["Beschreibung"],
+      latitude: item.data["Weitere Infos"]["Latitude"],
+      longitude: item.data["Weitere Infos"]["Longitude"],
+      type: item.data["Weitere Infos"]["Typ"],
+      previewImage: item.data["Vorschaubild"]?.[0] ?? null,
+      images: item.data["Weitere Fotos"] ?? null,
+      alwaysOpen: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
+      openingHours: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
+      items: items,
+    });
+  });
 }

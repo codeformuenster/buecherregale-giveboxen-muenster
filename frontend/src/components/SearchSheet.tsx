@@ -36,24 +36,23 @@ export function SearchSheet({
         {isLoading ? (
           <div className="text-gray-500 text-center py-8">Suche läuft...</div>
         ) : results.length ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 py-2">
             {results.map((result) => {
-              console.log(result);
               return (
                 <button
                   onClick={() => onSelect(result.id)}
                   key={result.id}
                   type="button"
-                  className="text-left flex flex-col gap-1 rounded-2xl border border-gray-100 px-4 py-3 shadow-sm hover:bg-gray-50 transition-colors"
+                  className="text-left flex flex-col gap-1 py-2 hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex flex-wrap items-center gap-1">
-                    <h2 className="text-gray-700 font-semibold">
+                  <div className="flex flex-wrap items-center">
+                    <h2 className="font-semibold">
                       {result.name}
                     </h2>
-                    <p className="text-gray-400">&middot; {result.address}</p>
+                    <p className="text-gray-700 line-clamp-1">{result.address}</p>
                   </div>
-                  <div className="text-gray-600 text-sm">
-                    {result.description}
+                  <div className="text-gray-500 text-sm line-clamp-3">
+                    {result.items?.map((item) => item.description).join(", ")}
                   </div>
                 </button>
               );
