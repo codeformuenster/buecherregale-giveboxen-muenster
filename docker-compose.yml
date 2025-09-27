@@ -21,3 +21,4 @@ services:
       - "5000:5000"  # Python-App läuft intern auf Port 5000
     volumes:
       - ./backend:/app
+    environment:

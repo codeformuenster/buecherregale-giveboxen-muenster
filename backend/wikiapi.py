@@ -13,7 +13,7 @@ from read_data import get_structured_data, get_json_from_wiki_table, build_wiki_
 
 S = requests.Session()
 
-URL = "https://www.muenster4you.de/w/api.php?"
+URL = "http://www.muenster4you.de/w/api.php?"
 
 
 def search(query):
