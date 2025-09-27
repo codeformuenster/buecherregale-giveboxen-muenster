@@ -10,7 +10,7 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route index path=":category?/:id?" element={<App />} />
+        <Route index path=":category?/*" element={<App />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

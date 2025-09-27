@@ -51,22 +51,30 @@ def get(poi, allFormat = False):
     if 'error' in data.keys(): return {'error': 'invalid poi'}
     
     wikitext = data['parse']['wikitext']['*']
-    try: 
-        if not allFormat: wikitext = get_structured_data(wikitext)    
-        else: wikitext = get_json_from_wiki_table(wikitext)
-        
-        wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
-        wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
-    except Exception as e:
-        print('Error parsing wikitext:', e)
-        logging.exception(f"Error while fetching POI data for '{poi}'")
-    
     if not allFormat: wikitext = get_structured_data(wikitext)    
     else: wikitext = get_json_from_wiki_table(wikitext)
-    
+ 
+    if not allFormat: 
+      if 'Vorschaubild' in wikitext: wikitext['Vorschaubild'] = _get_image_urls(wikitext['Vorschaubild'])
+      if 'Weitere Fotos' in wikitext: wikitext['Weitere Fotos'] = _get_image_urls(wikitext['Weitere Fotos'])
+
     return wikitext
 
-def alter_contents(location, items):   
+def add_data(location, items, image):   
+    token = _login()
+    
+    params_post = {
+      "action": "upload",
+      "filename": f"{location}.jpg",
+      "format": "json",
+      "token": token,
+      "ignorewarnings": 1
+    }
+
+    return token
+
+
+def _login():
     params_get = {
         'action': "query",
         'meta': "tokens",
@@ -76,15 +84,31 @@ def alter_contents(location, items):
     res = S.get(url=URL, params=params_get)
     data = res.json()
     token = data['query']['tokens']['logintoken']
+    
+    params_post = {
+      "action": "login",
+      "lgname": "Upload Bot@Upload_Bot",
+      "lgpassword": "k8tipijfemikk7ulb03scc1jugl7i8jj",
+      "format": "json",
+      "lgtoken": token
+    }
 
-    return data
+    res = S.post(url=URL, params=params_post)
 
+    params_get = {
+      "action": "query",
+      "meta":"tokens",
+      "format":"json"
+    }
+
+    res = S.get(url=URL, params=params_get)
+    data = res.json()
+
+    return data["query"]["tokens"]["csrftoken"]
 
 def _get_image_urls(images):
-    image_names = [f"Datei:{name.split('|')[0]}" for name in images]
-
-    print(image_names, images)
-
+    image_names = '|'.join([f"Datei:{name.split('|')[0]}" for name in images])
+    
     params_get = {
       'action': 'query',
       'titles': image_names,

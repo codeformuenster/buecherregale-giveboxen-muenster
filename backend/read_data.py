@@ -107,7 +107,69 @@ def get_json_from_wiki_table(data):
 
     return entries
 
+def create_md_table(data):
+    """
+    Erzeugt eine MediaWiki-Tabelle aus einem JSON-Dict.
+    Erwartet: data['items'] mit 'name' und 'category'
+    Rückgabe: String mit MediaWiki-Tabelle
+    """
+    wiki_table = '{| class="wikitable"\n! Tag !! Beschreibung\n'
+    
+    for item in data.get('items', []):
+        wiki_table += f'|-\n| {item["category"]} || {item["name"]}\n'
+    
+    wiki_table += '|}'
+    return wiki_table
 
+
+def build_wiki_page(data_old, json_response):#, page_title="Josefskirchplatz"):
+    #Seiten-Titel aus "Allgemeine Infos" extrahieren
+    page_title = data_old.get("Allgemeine Infos", {}).get("Name")
+    wikitext = f"== {page_title} ==\n\n"
+
+    # === Allgemeine Infos ===
+    allgemeine_infos = data_old.get("Allgemeine Infos", {})
+    wikitext += "=== Allgemeine Infos ===\n\n"
+    for k, v in allgemeine_infos.items():
+        wikitext += f"* {k}: {v}\n"
+    wikitext += "\n"
+
+    # === Weitere Infos ===
+    weitere_infos = data_old.get("Weitere Infos", {})
+    wikitext += "=== Weitere Infos ===\n\n"
+    for k, v in weitere_infos.items():
+        wikitext += f"* {k}: {v}\n"
+    wikitext += "\n"
+
+    # === Fotos ===
+    wikitext += "=== Fotos ===\n\n"
+
+    # ==== Vorschaubild ====
+    vorschaubild = data_old.get("Vorschaubild", [])
+    if vorschaubild:
+        match = re.search(r'/([^/]+\.jpg)$', vorschaubild[0])
+        if match:
+            filename = match.group(1)
+            wikitext += "==== Vorschaubild ====\n"
+            wikitext += f"[[Datei:{filename}|zentriert|mini|Vorschaubild]]\n\n"
+
+    # ==== Weitere Fotos ====
+    weitere_fotos = data_old.get("Weitere Fotos", [])
+    if weitere_fotos:
+        wikitext += "==== Weitere Fotos ====\n"
+        for photo_url in weitere_fotos:
+            match = re.search(r'/([^/]+\.jpg)$', photo_url)
+            if match:
+                filename = match.group(1)
+                wikitext += f"[[Datei:{filename}|zentriert|mini|Der aktuellste Stand der Give-Box]]\n"
+        wikitext += "\n"
+
+    # === Aktuelles Sortiment ===
+    wikitext += "=== Aktuelles Sortiment ===\n"
+    wikitext += create_md_table_from_items(json_response)
+    wikitext += "\n"
+
+    return wikitext.strip()
 
 
 

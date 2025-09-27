@@ -1,6 +1,7 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import wikitable2csv
 import wikiapi
+from ki_demo import givebox
 
 app = Flask(__name__)
 
@@ -43,13 +44,45 @@ def get():
  
 @app.route('/set_items', methods = ['POST'])
 def set_items():
-    request_data = request.json
+    no_gate = request.args.get('no_gate') == '1'
+    no_bbox = request.args.get('no_bbox') == '1'
 
-    location = request_data['location']
-    items = request_data['items']
+    img_bytes = None
+    # 1) Datei-Upload (multipart/form-data, field name: "image")
+    if 'image' in request.files:
+        file = request.files['image']
+        img_bytes = file.read()
+    # 2) Oder per URL im JSON
+    elif request.is_json and 'url' in request.json:
+        import requests
+        r = requests.get(request.json['url'], timeout=20)
+        r.raise_for_status()
+        img_bytes = r.content
+    else:
+        return jsonify({"error": "provide image (multipart 'image') or JSON {'url': ...}"}), 400
 
+    image_contents = {}
+    try:
+        if no_gate:
+            data = givebox.analyze_image(
+                image_bytes=img_bytes,
+                use_bbox=not no_bbox,
+            )
+        else:
+            data = givebox.analyze_image_with_gate(
+                image_bytes=img_bytes,
+                use_bbox=not no_bbox,
+            )
+        # bei Gate negativ sinnvollen HTTP-Code setzen (422)
+        if not no_gate and data.get("gate_status") == "givebox_not_ok":
+            return jsonify(data), 422
+        image_contents = jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+  
+    return image_contents
     return wikiapi.alter_contents(request_data, items)
-
     
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
+
