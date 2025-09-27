@@ -14,6 +14,8 @@ from read_data import get_structured_data, get_json_from_wiki_table, build_wiki_
 S = requests.Session()
 
 URL = "http://www.muenster4you.de/w/api.php?"
+UA = "UploadBot/1.0 (contact: you@example.com)"  # <-- set your contact here
+headers = {"User-Agent": UA}
 
 
 def search(query):
@@ -76,7 +78,7 @@ def add_data(location, items, image):
     file = {'file':(filename, image, 'multipart/form-data')}
 
     res = S.post(URL, files=file, data=params_post)
-    data = res.json()
+    # data = res.json()
 
     new_page = build_wiki_page(get(location), items, filename)
     
@@ -89,7 +91,7 @@ def add_data(location, items, image):
  
     res = S.post(URL, data=params_post)
 
-    return [filename, data]
+    return [filename]
 
 
 def _login():
@@ -98,7 +100,7 @@ def _login():
       "meta": "tokens",
       "type": "login",
       "format": "json"
-    })
+    }, headers=headers)
     print(r)
     login_token = r.json()["query"]["tokens"]["logintoken"]
 
@@ -111,8 +113,8 @@ def _login():
       "lgname": "Upload Bot@Upload_Bot",      # bot username
       "lgpassword": "tvhemegicppd2395a82b5h32rbt39u6n",  # bot password
       "lgtoken": login_token
-    })
-    print("Login:", r.json())
+    }, headers=headers)
+    print(r)
 
     # 3) Get a CSRF token
     r = S.get(URL, params={
