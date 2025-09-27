@@ -1,6 +1,6 @@
 import { CameraIcon, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { getItem, uploadImage, type ItemDetail } from "../api/get";
 import { Sheet } from "./Sheet";
@@ -31,7 +31,7 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
     }
   };
 
-  const fetchItemData = () => {
+  const fetchItemData = useCallback(() => {
     if (itemId) {
       setDataState("loading");
       setItem(null);
@@ -48,11 +48,11 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
           setContentExpanded(false);
         });
     }
-  };
+  }, [itemId]);
 
   useEffect(() => {
     fetchItemData();
-  }, [itemId]);
+  }, [fetchItemData, itemId]);
 
   useEffect(() => {
     if (isOpen && itemId) {
