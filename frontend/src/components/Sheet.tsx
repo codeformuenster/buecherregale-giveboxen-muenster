@@ -11,7 +11,6 @@ export function Sheet({
     <div className="inset-2 bottom-0 absolute flex flex-col">
       <div className="flex-1"></div>
       <motion.div
-        drag="y"
         className="pointer-events-auto h-[65vh] w-full bg-white/80 filter backdrop-blur-lg backdrop-saturate-180 shadow-2xl rounded-4xl pb-4 overflow-y-auto"
         animate={{
           y: show ? 0 : "100lvh",

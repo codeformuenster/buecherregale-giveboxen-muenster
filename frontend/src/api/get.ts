@@ -20,16 +20,45 @@ export async function getItems(): Promise<Item[]> {
   }));
 }
 
-export async function getItem(id: string) {
+export type ItemDetail = {
+  name: string;
+  address: string;
+  description: string;
+  latitude: number;
+  longitude: number;
+  type: string;
+  previewImage: string | null;
+  images: string[] | null;
+  alwaysOpen: boolean;
+  items: { name: string; description: string }[];
+};
+
+export async function getItem(id: string): Promise<ItemDetail> {
   const response = await fetch(`/api/get?poi=${id}`);
-  const data = await response.json();
+  const { data } = await response.json();
+
+  const items = data["Aktuelles Sortiment"]
+    ?.flat()
+    .filter((item: string) => item.length > 4)
+    .map((item: string) => {
+      const [tag, description] = item.split("||");
+
+      return {
+        name: tag.trim(),
+        description: description.trim(),
+      };
+    });
 
   return {
-    name: data.data["Allgemeine Infos"]["Name"],
-    address: data.data["Allgemeine Infos"]["Adresse"],
-    description: data.data["Weitere Infos"]["Beschreibung"],
-    latitude: data.data["Weitere Infos"]["Latitude"],
-    longitude: data.data["Weitere Infos"]["Longitude"],
-    type: data.data["Weitere Infos"]["Typ"],
+    name: data["Allgemeine Infos"]["Name"],
+    address: data["Allgemeine Infos"]["Adresse"],
+    description: data["Weitere Infos"]["Beschreibung"],
+    latitude: data["Weitere Infos"]["Latitude"],
+    longitude: data["Weitere Infos"]["Longitude"],
+    type: data["Weitere Infos"]["Typ"],
+    previewImage: data["Vorschaubild"][0] ?? null,
+    images: data["Weitere Fotos"] ?? null,
+    alwaysOpen: data["Weitere Infos"]["\\u00d6ffnungszeiten"] === "immer",
+    items: items,
   };
 }

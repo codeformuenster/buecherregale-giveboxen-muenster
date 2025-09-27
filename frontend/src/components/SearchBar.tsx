@@ -30,10 +30,23 @@ export const SearchBar = ({ className, ...rest }: SearchBarProps) => (
 
       <Popover className="pointer-events-auto">
         <Dialog className="bg-white/80 filter shadow-2xl backdrop-blur-sm backdrop-saturate-180 rounded-3xl w-50 shadow-3xl">
-          <div className="flex-col">
-            <div className="flex items-center gap-2 p-4">
+          <div className="flex-col p-2">
+            <div className="flex items-center gap-2 px-4 py-3">
               <SquareArrowOutUpRight className="w-4 h-4" />
               Box hinzufügen
+            </div>
+            <div className="flex items-center gap-2 px-4 py-3">
+              <svg
+                className="w-4 h-4 rounded-sm"
+                xmlns="http://www.w3.org/2000/svg"
+                id="flag-icons-de"
+                viewBox="0 0 512 512"
+              >
+                <path fill="#fc0" d="M0 341.3h512V512H0z" />
+                <path fill="#000001" d="M0 0h512v170.7H0z" />
+                <path fill="red" d="M0 170.7h512v170.6H0z" />
+              </svg>
+              Sprache: Deutsch
             </div>
           </div>
         </Dialog>

@@ -1,5 +1,8 @@
-import { CameraIcon, LinkIcon, QrCode, XIcon } from "lucide-react";
+import { CameraIcon, LinkIcon, Loader, QrCode, XIcon } from "lucide-react";
 
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
+import { getItem, type ItemDetail } from "../api/get";
 import type { Givebox } from "../api/giveboxes";
 import { Sheet } from "./Sheet";
 
@@ -10,18 +13,85 @@ type Props = {
   isLoading: boolean;
 };
 
-export function DetailsSheet({ isOpen, onClose, givebox, isLoading }: Props) {
-  const hasGivebox = Boolean(givebox);
+export function DetailsSheet({ isOpen, onClose }: Props) {
+  const { category, "*": id } = useParams();
+
+  const itemId = category === "place" ? id : null;
+
+  const [item, setItem] = useState<ItemDetail | null>(null);
+  const [dataState, setDataState] = useState<"loading" | "error" | "success">(
+    "loading"
+  );
+
+  useEffect(() => {
+    if (itemId) {
+      setDataState("loading");
+      setItem(null);
+      getItem(itemId)
+        .then((data) => {
+          console.log(data);
+          setItem(data);
+          setDataState("success");
+        })
+        .catch(() => {
+          setDataState("error");
+          setItem(null);
+        });
+    }
+  }, [itemId]);
+
+  let child = null;
+
+  switch (dataState) {
+    case "loading":
+      child = (
+        <div className="text-gray-500 text-center py-8">
+          <Loader className="animate-spin" />
+        </div>
+      );
+      break;
+    case "error":
+      child = <div className="text-gray-500 text-center py-8">Fehler</div>;
+      break;
+    case "success":
+      child = (
+        <>
+          <div>
+            <h2 className="text-gray-700 mt-4 font-semibold">Inhalt</h2>
+            <ul className="text-gray-700 list-disc ml-5 marker:text-gray-400">
+              {item?.items?.map((item, index) => (
+                <li key={index} className="">
+                  {item.description}
+                </li>
+              ))}
+            </ul>
+          </div>
+          {item?.images?.length ? (
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              {item.images.map((imageUrl, index) => (
+                <img
+                  key={`${item.name}-image-${index}`}
+                  className="w-full h-full object-cover rounded-xl"
+                  src={imageUrl}
+                  alt={`${item.name} Bild ${index + 1}`}
+                />
+              ))}
+            </div>
+          ) : null}
+        </>
+      );
+      break;
+  }
 
   return (
     <Sheet show={isOpen}>
       <div className="flex gap-2 sticky top-0 bg-white/90 filter backdrop-blur-lg z-10 py-4 px-6">
         <div className="flex-1 flex flex-col">
           <h1 className="text-xl font-semibold pt-0.75">
-            {givebox?.name ?? "Givebox auswählen"}
+            {item?.name ?? "Givebox auswählen"}
           </h1>
           <div className="text-gray-500">
-            {givebox?.address ?? "Bitte eine Givebox auswählen."}
+            {item?.address ?? "Bitte eine Givebox auswählen."}
           </div>
         </div>
         <button
@@ -46,7 +116,7 @@ export function DetailsSheet({ isOpen, onClose, givebox, isLoading }: Props) {
 
         <div className="flex gap-2">
           <a
-            href={givebox?.address}
+            href={item?.address}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium"
@@ -60,34 +130,7 @@ export function DetailsSheet({ isOpen, onClose, givebox, isLoading }: Props) {
           </button>
         </div>
 
-        {isLoading ? (
-          <div className="text-gray-500 text-center py-8">
-            Giveboxes werden geladen...
-          </div>
-        ) : hasGivebox ? (
-          <>
-            <div>
-              <h2 className="text-gray-700 mt-4 font-semibold">Inhalt</h2>
-              <div className="text-gray-700">{givebox?.description}</div>
-            </div>
-            {givebox?.images?.length ? (
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                {givebox.images.map((imageUrl, index) => (
-                  <img
-                    key={`${givebox.id}-image-${index}`}
-                    className="w-full h-full object-cover rounded-xl"
-                    src={imageUrl}
-                    alt={`${givebox.name} Bild ${index + 1}`}
-                  />
-                ))}
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <div className="text-gray-500 text-center py-8">
-            Keine Givebox ausgewählt.
-          </div>
-        )}
+        {child}
       </div>
     </Sheet>
   );
