@@ -4,7 +4,7 @@ export type Item = {
   latitude: number;
   longitude: number;
   category: string;
-  name: string
+  name: string;
 };
 
 export async function getItems(): Promise<Item[]> {
@@ -23,6 +23,7 @@ export async function getItems(): Promise<Item[]> {
 }
 
 export type ItemDetail = {
+  id: string;
   name: string;
   address: string;
   description: string;
@@ -32,6 +33,7 @@ export type ItemDetail = {
   previewImage: string | null;
   images: string[] | null;
   alwaysOpen: boolean;
+  openingHours: string | null;
   items: { name: string; description: string }[];
 };
 
@@ -52,6 +54,7 @@ export async function getItem(id: string): Promise<ItemDetail> {
     });
 
   return {
+    id: data["id"],
     name: data["Allgemeine Infos"]["Name"],
     address: data["Allgemeine Infos"]["Adresse"],
     description: data["Weitere Infos"]["Beschreibung"],
@@ -60,7 +63,8 @@ export async function getItem(id: string): Promise<ItemDetail> {
     type: data["Weitere Infos"]["Typ"],
     previewImage: data["Vorschaubild"][0] ?? null,
     images: data["Weitere Fotos"] ?? null,
-    alwaysOpen: data["Weitere Infos"]["\\u00d6ffnungszeiten"] === "immer",
+    alwaysOpen: data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
+    openingHours: data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
     items: items,
   };
 }
@@ -78,6 +82,40 @@ export async function uploadImage(
     body: formData,
   });
   const data = await response.json();
-  alert(data.data);
   return data.data;
+}
+
+export async function searchItems(query: string): Promise<ItemDetail[]> {
+  const response = await fetch(`/api/search?query=${query}`);
+  const data = await response.json();
+
+  console.log(data.data);
+  return data.data?.map((item: any) => {
+    const items = item.data["Aktuelles Sortiment"]
+      ?.flat()
+      ?.filter((item: string) => item.length > 4)
+      ?.map((item: string) => {
+        const [tag, description] = item.split("||");
+
+        return {
+          name: tag.trim(),
+          description: description.trim(),
+        };
+      });
+
+    return ({
+      id: item.data["id"],
+      name: item.data["Allgemeine Infos"]["Name"],
+      address: item.data["Allgemeine Infos"]["Adresse"],
+      description: item.data["Weitere Infos"]["Beschreibung"],
+      latitude: item.data["Weitere Infos"]["Latitude"],
+      longitude: item.data["Weitere Infos"]["Longitude"],
+      type: item.data["Weitere Infos"]["Typ"],
+      previewImage: item.data["Vorschaubild"]?.[0] ?? null,
+      images: item.data["Weitere Fotos"] ?? null,
+      alwaysOpen: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
+      openingHours: item.data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
+      items: items,
+    });
+  });
 }

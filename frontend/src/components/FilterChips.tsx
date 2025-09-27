@@ -16,6 +16,7 @@ import {
   ToyBrick,
   UtensilsCrossed,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 export type Category =
   | "books"
@@ -49,7 +50,8 @@ const CategoryChip = ({
   isActive,
   onClick,
 }: CategoryChipProps) => (
-  <button
+  <motion.button
+  whileTap={{ scale: 0.98 }}
     type="button"
     onClick={() => {
       if (isActive) {
@@ -76,7 +78,7 @@ const CategoryChip = ({
     >
       {label}
     </span>
-  </button>
+  </motion.button>
 );
 
 type FilterChipsProps = {
