@@ -243,6 +243,7 @@ function App() {
           onChange={handleSearchChange}
           onFocus={() => navigate("/search")}
         />
+        {/* Category Filter Chips 
         <FilterChips
           activeCategory={id as Category}
           onCategoryClick={(category) => {
@@ -252,7 +253,7 @@ function App() {
               navigate("/");
             }
           }}
-        />
+        />*/}
       </motion.div>
       <div className="pointer-events-none z-10 absolute w-full top-0 h-[100dvh]">
         <DetailsSheet
