@@ -4,6 +4,7 @@ export type Item = {
   latitude: number;
   longitude: number;
   category: string;
+  name: string
 };
 
 export async function getItems(): Promise<Item[]> {
@@ -17,6 +18,7 @@ export async function getItems(): Promise<Item[]> {
     latitude: item["Latitude"],
     longitude: item["Longitude"],
     category: item["Kategorie"],
+    name: item["Name"],
   }));
 }
 

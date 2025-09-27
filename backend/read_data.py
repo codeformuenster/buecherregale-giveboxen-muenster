@@ -86,12 +86,14 @@ def get_json_from_wiki_table(data):
             value = line[1:].strip()
 
             # Wiki-Link bereinigen: [[Link|Name]] → Name
-            match = re.match(r'\[\[(.*?)\|.*?\]\]', value)
+            match = re.match(r'\[\[(.*?)\|(.*?)\]\]', value)
             if match:
                 value = match.group(1)
+                name = match.group(2)
 
             if 'Bezeichnung / ID' not in current:
                 current['Bezeichnung / ID'] = value
+                current['Name'] = name
             elif 'Adresse' not in current:
                 current['Adresse'] = value
             elif 'Latitude' not in current:
