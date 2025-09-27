@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: "0.0.0.0",
+    allowedHosts: ["localhost", ".kiepenkiste.de"],
     proxy: {
       "/api": {
         target: "http://backend:5000",
