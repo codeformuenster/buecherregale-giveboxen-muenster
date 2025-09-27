@@ -32,6 +32,7 @@ export type ItemDetail = {
   previewImage: string | null;
   images: string[] | null;
   alwaysOpen: boolean;
+  openingHours: string | null;
   items: { name: string; description: string }[];
 };
 
@@ -60,7 +61,8 @@ export async function getItem(id: string): Promise<ItemDetail> {
     type: data["Weitere Infos"]["Typ"],
     previewImage: data["Vorschaubild"][0] ?? null,
     images: data["Weitere Fotos"] ?? null,
-    alwaysOpen: data["Weitere Infos"]["\\u00d6ffnungszeiten"] === "immer",
+    alwaysOpen: data["Weitere Infos"]["\u00d6ffnungszeiten"] === "immer",
+    openingHours: data["Weitere Infos"]["\u00d6ffnungszeiten"] ?? null,
     items: items,
   };
 }

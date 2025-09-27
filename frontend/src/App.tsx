@@ -36,6 +36,18 @@ const giveboxIcon = L.divIcon({
   iconAnchor: [16, 16],
 });
 
+const giveboxOpeningHoursIcon = L.divIcon({
+  className: "custom-marker",
+  html: `
+    <div class="relative w-8 h-8 rounded-full border-2 border-white shadow-[0_0_8px_rgba(0,0,0,0.3)] flex items-center justify-center bg-gradient-to-br from-emerald-300 to-emerald-500 text-white">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package-open-icon lucide-package-open"><path d="M12 22v-9"/><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z"/><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13"/><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z"/></svg>
+      <div class="absolute z-10 top-0.5 -right-1.5 leading-0">🕗</div>
+    </div>
+  `,
+  iconSize: [32, 32],
+  iconAnchor: [16, 16],
+});
+
 function App() {
   const markersLayerRef = useRef<L.LayerGroup | null>(null);
 
@@ -181,7 +193,7 @@ function App() {
         {items.map((item) => (
           <Marker
             key={item.id}
-            icon={item.category === "Givebox" ? giveboxIcon : bookIcon}
+            icon={item.category === "Givebox" ? giveboxIcon : item.category === "Givebox \"AWM Wechselstube\"" ? giveboxOpeningHoursIcon : bookIcon}
             position={[item.latitude, item.longitude]}
             eventHandlers={{
               click: () => {

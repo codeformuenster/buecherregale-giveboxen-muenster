@@ -70,7 +70,7 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
     case "success":
       child = (
         <>
-          <div>
+          {item?.items?.length && <div>
             <h2 className="text-gray-700 mt-4 font-semibold">Inhalt</h2>
             <ul
               className={`text-gray-700 ${
@@ -93,7 +93,11 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
                 Mehr anzeigen
               </button>
             )}
-          </div>
+          </div>}
+          {item?.openingHours && <div>
+            <h2 className="text-gray-700 mt-4 font-semibold">Öffnungszeiten</h2>
+            <div className="text-gray-700">{item?.openingHours}</div>
+          </div>}
           {item?.images?.length ? (
             <div className="grid grid-cols-2 gap-4 mt-4">
               {item.previewImage && (
@@ -153,7 +157,7 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
 
         <div className="flex gap-2">
           <a
-            href={item?.address}
+            href={`https://www.muenster4you.de/wiki/${itemId}`}
             target="_blank"
             rel="noopener noreferrer"
             className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium"
