@@ -60,7 +60,7 @@ def set_items():
         img_bytes = r.content
     else:
         return jsonify({"error": "provide image (multipart 'image') or JSON {'url': ...}"}), 400
-
+    
     image_contents = {}
     try:
         if no_gate:
@@ -76,15 +76,15 @@ def set_items():
         # bei Gate negativ sinnvollen HTTP-Code setzen (422)
         if not no_gate and data.get("gate_status") == "givebox_not_ok":
             return jsonify(data), 422
-        image_contents = jsonify(data)
+        image_contents = data
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-  
-    
+ 
+    print('file', file)
 
-    return image_contents
-    return wikiapi.add_data(location, image_contents)
-    
+    location = request.form['locationId']
+    return wikiapi.add_data(location, image_contents, img_bytes)
+
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
 
