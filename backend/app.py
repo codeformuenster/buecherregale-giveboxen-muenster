@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import wikitable2csv
 import wikiapi
-from ki_demo import giveboxe
+from backend.ki_demo import givebox
 
 app = Flask(__name__)
 
