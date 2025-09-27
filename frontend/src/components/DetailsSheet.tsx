@@ -135,14 +135,14 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
           </div>
         </div>
         <button
-          className="bg-gray-100 text-gray-400 w-9 h-9 flex items-center justify-center rounded-full -mr-2"
+          className="bg-gray-100 text-gray-400 w-9 h-9 flex items-center justify-center rounded-full -mr-2 active:opacity-50 transition-opacity"
           onClick={onClose}
         >
           <XIcon />
         </button>
       </div>
       <div className="px-4 flex flex-col gap-2 pt-4">
-        <label className="w-full bg-black text-white rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium cursor-pointer">
+        <label className="w-full bg-black text-white rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium cursor-pointer active:opacity-50 transition-opacity">
           <input
             type="file"
             capture="environment"
@@ -160,12 +160,12 @@ export function DetailsSheet({ isOpen, onClose }: Props) {
             href={`https://www.muenster4you.de/wiki/${itemId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium"
+            className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium active:opacity-50 transition-opacity"
           >
             <LinkIcon className="text-gray-700" />
             Wiki-Eintrag
           </a>
-          <button className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium">
+          <button className="w-full bg-black/10 text-gray-800 rounded-full py-3 px-4 flex items-center gap-2 justify-center font-medium active:opacity-50 transition-opacity">
             <QrCode className="text-gray-700" />
             Code zeigen
           </button>
