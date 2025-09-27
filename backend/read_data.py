@@ -148,6 +148,13 @@ def build_wiki_page(data_old, json_response, new_image):#, page_title="Josefskir
         wikitext += f"* {k}: {v}\n"
     wikitext += "\n"
 
+
+     # === Füllstand ===
+    fullness = json_response.get("fullness")
+    if fullness:
+        wikitext += "=== Füllstand ===\n\n"
+        wikitext += f"* Aktueller Füllstand: {fullness}\n\n"
+
     # === Fotos ===
     wikitext += "=== Fotos ===\n\n"
 
