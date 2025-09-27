@@ -43,7 +43,7 @@ function App() {
   const [mapCenterLat, setMapCenterLat] = useState<number | null>(null);
 
   const navigate = useNavigate();
-  const { category, id } = useParams();
+  const { category, "*": id } = useParams();
 
   const [items, setItems] = useState<Item[]>([]);
 
