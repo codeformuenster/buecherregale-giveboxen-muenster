@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  frontend:
+    build: ./frontend
+    working_dir: /app
+    command: npm run dev
+    ports:
+      - "3000:3000"  # React-Dev-Server nach außen erreichbar
+      - "5173:5173"  # Vite-Server nach außen erreichbar
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    working_dir: /app
+    command: python app.py
+    ports:
+      - "5000:5000"  # Python-App läuft intern auf Port 5000
+    volumes:
+      - ./backend:/app
