@@ -80,8 +80,10 @@ def set_items():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
   
+    
+
     return image_contents
-    return wikiapi.alter_contents(request_data, items)
+    return wikiapi.add_data(location, image_contents)
     
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
