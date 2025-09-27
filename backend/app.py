@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import wikitable2csv
 import wikiapi
-from ki_demo import givebox
+from ki_demo import giveboxe
 
 app = Flask(__name__)
 
@@ -97,3 +97,4 @@ def givebox_analyze():
     
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000, debug=True)
+
